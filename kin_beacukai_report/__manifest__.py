@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*-
+
+{
+    "name": "Bea Cukai Report",
+    "version": "1.0",
+    'depends': [
+        'stock', 'auditlog', 'purchase_stock', 'sale_stock'
+    ],
+    "author": 'Serpent Consulting Services Pvt. Ltd., Ibrahim, Kinsoft Indonesia, Kikin Kusumah',
+    "category": "Inventory",
+    "description": """
+        Module to print the reports Excel Inventory for Kawasan Berikat.
+    """,
+    "init_xml": [],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'wizard/inventory_report_mutasi_wizard_view.xml',
+        'wizard/inventory_report_mutasi_wizard_preview_view.xml',
+        'wizard/inventory_report_mutasi_sisa_wizard_view.xml',
+        'wizard/inventory_report_mutasi_sisa_wizard_preview_view.xml',
+        'wizard/inventory_report_mutasi_jadi_wizard_view.xml',
+        'wizard/inventory_report_mutasi_jadi_wizard_preview_view.xml',
+        'wizard/inventory_report_mutasi_mesin_wizard_view.xml',
+        'wizard/inventory_report_mutasi_mesin_wizard_preview_view.xml',
+        'wizard/inventory_report_wip_wizard_view.xml',
+        'wizard/inventory_report_wip_wizard_preview_view.xml',
+        'wizard/inventory_report_pengeluaran_wizard_view.xml',
+        'wizard/inventory_report_pengeluaran_wizard_preview_view.xml',
+        'wizard/inventory_report_penerimaan_wizard_view.xml',
+        'wizard/inventory_report_penerimaan_wizard_preview_view.xml',
+        'wizard/inventory_report_penerimaan_belawan_wizard_view.xml',
+        'wizard/inventory_report_penerimaan_belawan_wizard_preview_view.xml',
+        'wizard/inventory_report_pengeluaran_belawan_wizard_view.xml',
+        'wizard/inventory_report_pengeluaran_belawan_wizard_preview_view.xml',
+        'wizard/inventory_report_mutasi_belawan_wizard_view.xml',
+        'wizard/inventory_report_mutasi_belawan_wizard_preview_view.xml',
+        'wizard/posisi_barang_per_dokumen_belawan_wizard_view.xml',
+        'wizard/posisi_barang_per_dokumen_belawan_wizard_preview_view.xml',
+        'wizard/posisi_stok_barang_belawan_wizard_view.xml',
+        'wizard/posisi_stok_barang_belawan_wizard_preview_view.xml',
+        'wizard/aktivitas_importir_belawan_wizard_view.xml',
+        'wizard/aktivitas_importir_belawan_wizard_preview_view.xml',
+        'views/stock_picking_view.xml',
+        'views/product_category_view.xml',
+        'views/menu_view.xml',
+    ],
+    'installable': True,
+    'auto_install': False,
+    'application': True,
+}

@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mutasi_auditlog_log,access_auditlog_log,auditlog.model_auditlog_log,kin_beacukai_report.group_bea_cukai,1,0,0,0

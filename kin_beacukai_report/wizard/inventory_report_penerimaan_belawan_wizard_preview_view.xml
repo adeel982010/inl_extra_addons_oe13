@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="report_inventory_penerimaan_belawan_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.internal_layout">
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <table class="table table-condensed">
+                                <thead>
+                                    <t t-set="start_date" t-value="time.strftime('%d/%m/%Y',time.strptime(str(o.date_start),'%Y-%m-%d'))"/>
+                                    <t t-set="start_end" t-value="time.strftime('%d/%m/%Y',time.strptime(str(o.date_end),'%Y-%m-%d'))"/>
+                                    <center>
+                                        <h4><b><span t-field="user.company_id.name" /></b></h4>
+                                        <h4><b>Laporan Pemasukan Barang Per Dokumen <t t-esc="o.export_report"/></b></h4>
+                                        <br/>
+                                    </center>
+                                    <span><b>Periode : </b><t t-esc="start_date"/> - <t t-esc="start_end"/></span>
+                                    <tr>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>No</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>Jenis Dokumen</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>Nomor Aju</strong></th>
+                                        <th class="text-center" colspan="2"><strong>Dokumen Pabean</strong></th>
+                                        <th class="text-center" colspan="2"><strong>Bukti Penerimaan Barang</strong></th>
+                                        <th class="text-center" colspan="2"><strong>Invoice (IN)</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>Pemasok/Pengirim</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>Kode Barang</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>Nama Barang</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>Satuan</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>Jumlah</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>Nilai Barang</strong></th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center"><strong>Nomor</strong></th>
+                                        <th class="text-center"><strong>Tanggal</strong></th>
+                                        <th class="text-center"><strong>Nomor</strong></th>
+                                        <th class="text-center"><strong>Tanggal</strong></th>
+                                        <th class="text-center"><strong>Nomor</strong></th>
+                                        <th class="text-center"><strong>Tanggal</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="number" t-value="0"/>
+                                    <tr t-foreach="o.get_result()" t-as="line">
+                                        <t t-set="number" t-value="number+1"/>
+                                        <td class="text-center">
+                                            <span t-esc="number"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['jenis_dokumen']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['no_aju']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['nomor_pabean']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tanggal_pabean']),'%Y-%m-%d'))"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['nomor_penerimaan_barang']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tanggal_penerimaan_barang']),'%Y-%m-%d %H:%M:%S'))"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['no_invoice']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tanggal_invoice']),'%Y-%m-%d'))"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['pemasok_pengirim']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['kode_barang']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['nama_barang']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['satuan']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['jumlah']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['currency']"/>
+                                            <span t-esc="'{0:,.2f}'.format(float(line['nilai_barang']))"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <report 
+            string="Report PDF Penerimaan Barang" 
+            id="report_inventory_penerimaan_belawan"
+            model="inventory.export.penerimaan.belawan.report.wizard"
+            report_type="qweb-pdf"
+            name="kin_beacukai_report.report_inventory_penerimaan_belawan_document"
+            file="kin_beacukai_report.report_inventory_penerimaan_belawan_document"
+        />
+        
+        <record id="paperformat_pdf_inventory_penerimaan_belawan" model="report.paperformat">
+            <field name="name">Paperformat PDF Inventory Penerimaan Barang</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">30</field> 
+            <field name="margin_bottom">7</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">25</field>
+            <field name="dpi">90</field>
+            <field name="report_ids" eval="[
+                (4, ref('kin_beacukai_report.report_inventory_penerimaan_belawan')),
+            ]"/>
+        </record>
+    </data>
+</odoo>

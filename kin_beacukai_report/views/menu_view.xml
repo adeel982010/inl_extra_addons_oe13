@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!--    Window Actions-->
+    <!--    Posisi harus di atas Menu Items-->
+    <!--    Sei Mangkei-->
+    <record id="action_print_penerimaan_inventory_report" model="ir.actions.act_window">
+        <field name="name">Penerimaan Barang</field>
+        <field name="res_model">inventory.export.penerimaan.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_pengeluaran_inventory_report" model="ir.actions.act_window">
+        <field name="name">Pengeluaran Barang</field>
+        <field name="res_model">inventory.export.pengeluaran.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_wip_inventory_export_report" model="ir.actions.act_window">
+        <field name="name">WIP</field>
+        <field name="res_model">inventory.export.wip.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_mutasi_inventory_export_report" model="ir.actions.act_window">
+        <field name="name">Mutasi Bahan Baku dan Bahan Penolong</field>
+        <field name="res_model">inventory.export.mutasi.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_mutasi_jadi_inventory_export_report" model="ir.actions.act_window">
+        <field name="name">Mutasi Barang Jadi</field>
+        <field name="res_model">inventory.export.mutasi.jadi.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_mutasi_sisa_inventory_export_report" model="ir.actions.act_window">
+        <field name="name">Mutasi Barang Sisa dan Scrap</field>
+        <field name="res_model">inventory.export.mutasi.sisa.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_mutasi_mesin_inventory_export_report" model="ir.actions.act_window">
+        <field name="name">Mutasi Mesin dan Peralatan Perkantoran</field>
+        <field name="res_model">inventory.export.mutasi.mesin.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!--    Bwlawan-->
+    <record id="action_print_penerimaan_belawan_inventory_report" model="ir.actions.act_window">
+        <field name="name">Penerimaan Barang Belawan</field>
+        <field name="res_model">inventory.export.penerimaan.belawan.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_pengeluaran_belawan_inventory_report" model="ir.actions.act_window">
+        <field name="name">Pengeluaran Barang Belawan</field>
+        <field name="res_model">inventory.export.pengeluaran.belawan.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_mutasi_belawan_inventory_export_report" model="ir.actions.act_window">
+        <field name="name">Mutasi Barang Belawan</field>
+        <field name="res_model">inventory.export.mutasi.belawan.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_aktivitas_importir_belawan" model="ir.actions.act_window">
+        <field name="name">Aktivitas Importir Belawan</field>
+        <field name="res_model">aktivitas.importir.belawan.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_posisi_barang_per_dokumen_belawan" model="ir.actions.act_window">
+        <field name="name">Posisi Barang per Dokumen Belawan</field>
+        <field name="res_model">posisi.barang.per.dokumen.belawan.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_posisi_stok_barang_belawan" model="ir.actions.act_window">
+        <field name="name">Posisi Stok Barang Belawan</field>
+        <field name="res_model">posisi.stok.barang.belawan.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_bea_cukai" name="Bea Cukai" web_icon="stock,static/description/icon.png" groups="kin_beacukai_report.group_bea_cukai"/>
+
+    <menuitem action="auditlog.action_auditlog_log_tree" name="User Activity History"
+            id="menu_bea_cukai_log_action"
+            parent="menu_bea_cukai" sequence="2"/>
+    
+    <menuitem id="menu_bea_cukai_report" name="Reporting"
+            parent="menu_bea_cukai" sequence="3"/>
+
+    <menuitem action="action_print_penerimaan_inventory_report"
+            id="menu_bea_cukai_report_penerimaan"
+            parent="menu_bea_cukai_report" sequence="301"/>
+
+    <menuitem action="action_print_pengeluaran_inventory_report"
+            id="menu_bea_cukai_report_pengeluaran"
+            parent="menu_bea_cukai_report" sequence="302"/>
+
+    <menuitem action="action_print_wip_inventory_export_report"
+            id="menu_bea_cukai_report_wip"
+            parent="menu_bea_cukai_report" sequence="303"/>
+
+    <menuitem action="action_print_mutasi_inventory_export_report"
+            id="menu_bea_cukai_report_mutasi"
+            parent="menu_bea_cukai_report" sequence="304"/>
+
+    <menuitem action="action_print_mutasi_jadi_inventory_export_report"
+            id="menu_bea_cukai_report_mutasi_jadi"
+            parent="menu_bea_cukai_report" sequence="305"/>
+
+    <menuitem action="action_print_mutasi_sisa_inventory_export_report"
+            id="menu_bea_cukai_report_mutasi_sisa"
+            parent="menu_bea_cukai_report" sequence="306"/>
+
+    <menuitem action="action_print_mutasi_mesin_inventory_export_report"
+            id="menu_bea_cukai_report_mutasi_mesin"
+            parent="menu_bea_cukai_report" sequence="307"/>
+
+    <!--    Belawan-->
+    <menuitem id="menu_bea_cukai_belawan_report" name="Reporting Belawan"
+            parent="menu_bea_cukai" sequence="4"/>
+
+    <menuitem action="action_print_penerimaan_belawan_inventory_report"
+            id="menu_bea_cukai_report_penerimaan_belawan"
+            parent="menu_bea_cukai_belawan_report" sequence="401"/>
+
+    <menuitem action="action_print_pengeluaran_belawan_inventory_report"
+            id="menu_bea_cukai_report_pengeluaran_belawan"
+            parent="menu_bea_cukai_belawan_report" sequence="402"/>
+
+    <menuitem action="action_print_mutasi_belawan_inventory_export_report"
+            id="menu_bea_cukai_report_mutasi_belawan"
+            parent="menu_bea_cukai_belawan_report" sequence="403"/>
+
+    <menuitem action="action_aktivitas_importir_belawan"
+            id="menu_aktivitas_importir_belawan"
+            parent="menu_bea_cukai_belawan_report" sequence="404"/>
+
+    <menuitem action="action_posisi_barang_per_dokumen_belawan"
+            id="menu_posisi_barang_per_dokumen_belawan"
+            parent="menu_bea_cukai_belawan_report" sequence="405"/>
+
+    <menuitem action="action_posisi_stok_barang_belawan"
+            id="menu_posisi_stok_barang_belawan"
+            parent="menu_bea_cukai_belawan_report" sequence="406"/>
+
+
+</odoo>

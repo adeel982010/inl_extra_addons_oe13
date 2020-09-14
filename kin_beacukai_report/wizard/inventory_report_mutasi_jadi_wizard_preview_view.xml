@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="report_inventory_mutasi_jadi_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.internal_layout">
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <table class="table table-condensed">
+                                <thead>
+                                    <t t-set="start_date" t-value="time.strftime('%d/%m/%Y',time.strptime(str(o.date_start),'%Y-%m-%d'))"/>
+                                    <t t-set="start_end" t-value="time.strftime('%d/%m/%Y',time.strptime(str(o.date_end),'%Y-%m-%d'))"/>
+                                    <center>
+                                        <h4><b>Laporan Pertanggungjawaban</b></h4>
+                                        <h4><b>Mutasi Barang Jadi</b></h4>
+                                        <br/>
+                                    </center>
+                                    <span><b>Periode : </b><t t-esc="start_date"/> - <t t-esc="start_end"/></span>
+                                    <tr>
+                                        <th style="vertical-align:middle"><strong>No</strong></th>
+                                        <th><strong>Kode Barang</strong></th>
+                                        <th style="vertical-align:middle"><strong>Nama Barang</strong></th>
+                                        <th style="vertical-align:middle"><strong>Satuan</strong></th>
+                                        <th><strong>Saldo Awal <t t-esc="start_date"/></strong></th>
+                                        <th style="vertical-align:middle"><strong>Pemasukan</strong></th>
+                                        <th style="vertical-align:middle"><strong>Pengeluaran</strong></th>
+                                        <th style="vertical-align:middle"><strong>Penyesuaian</strong></th>
+                                        <th><strong>Saldo Akhir</strong></th>
+                                        <th><strong>Stock Opname</strong></th>
+                                        <th style="vertical-align:middle"><strong>Selisih</strong></th>
+                                        <th style="vertical-align:middle"><strong>Keterangan</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="number" t-value="0"/>
+                                    <tr t-foreach="o.get_result()" t-as="line">
+                                        <t t-set="number" t-value="number+1"/>
+                                        <td class="text-center">
+                                            <span t-esc="number"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="line['kode_barang']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="line['nama_barang']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['satuan']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="'{0:,.0f}'.format(line['saldo_awal'])"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="'{0:,.0f}'.format(line['pemasukan'])"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="'{0:,.0f}'.format(line['pengeluaran'])"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="'{0:,.0f}'.format(line['penyesuaian'])"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="'{0:,.0f}'.format(line['saldo_akhir'])"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="'{0:,.0f}'.format(line['stock_opname'])"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="'{0:,.0f}'.format(line['selisih'])"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['keterangan']"/>
+                                        </td>
+                                        
+                                        <!-- <td class="text-right"> -->
+                                            <!-- <span t-esc="'{0:,.0f}'.format(line[4])"/> -->
+                                        <!-- </td> -->
+                                        <!-- <td class="text-right"> -->
+                                            <!-- <span t-esc="'{0:,.0f}'.format(line[5]).replace(',','.')"/> -->
+                                        <!-- </td> -->
+                                    </tr>
+                                </tbody>
+                                <!-- <tbody> -->
+                                    <!-- <tr> -->
+                                        <!-- <td colspan="5" class="text-right"> -->
+                                            <!-- <strong>Total</strong> -->
+                                        <!-- </td> -->
+                                        <!-- <td class="text-right"> -->
+                                            <!-- <strong><span t-esc="'{0:,.0f}'.format(tot_qty)"/></strong> -->
+                                        <!-- </td> -->
+                                        <!-- <td class="text-right"> -->
+                                            <!-- <strong><span t-esc="'{0:,.0f}'.format(tot_rp).replace(',','.')"/></strong> -->
+                                        <!-- </td> -->
+                                    <!-- </tr> -->
+                                <!-- </tbody> -->
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <report 
+            string="Report PDF Mutasi Jadi" 
+            id="report_inventory_mutasi_jadi" 
+            model="inventory.export.mutasi.jadi.report.wizard" 
+            report_type="qweb-pdf"
+            name="kin_beacukai_report.report_inventory_mutasi_jadi_document"
+            file="kin_beacukai_report.report_inventory_mutasi_jadi_document"
+        />
+        
+        <record id="paperformat_pdf_inventory_mutasi_jadi" model="report.paperformat">
+            <field name="name">Paperformat PDF Inventory Mutasi Jadi</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">30</field> 
+            <field name="margin_bottom">7</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">25</field>
+            <field name="dpi">90</field>
+            <field name="report_ids" eval="[
+                (4, ref('kin_beacukai_report.report_inventory_mutasi_jadi')),
+            ]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+        <record model="ir.ui.view" id="view_picking_form_inherit">
+            <field name="name">view_picking_form_inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes"> 
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="after"> 
+                    <field name="jenis_dokumen"/>
+                    <field name="no_aju"/>
+                    <field name="no_dokumen" attrs="{'required': [('jenis_dokumen', 'not in', ('BC 4.0','BC 4.1'))]}"/>
+                    <field name="tanggal_dokumen" attrs="{'required': [('jenis_dokumen', 'not in', ('BC 4.0','BC 4.1'))]}"/>
+                    <field name="currency_id" />
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="no_invoice" />
+                    <field name="tanggal_invoice" />
+                    <field name="no_polisi" />
+                    <field name="driver_name" />
+                    <field name="no_karcis_timbangan" />
+                </xpath>
+                <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_uom']" position="after">
+                    <field name="product_price"/>
+                    <field name="subtotal_price"/>
+                </xpath>
+            </field> 
+        </record>
+
+        <record model="ir.ui.view" id="kin_view_stock_move_line_detailed_operation_tree">
+            <field name="name">kin.stock.move.line.operations.tree</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='qty_done']" position="before">
+                    <field name="bruto"/>
+                    <field name="tarra"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="vpicktree_inherit">
+            <field name="name">vpicktree_inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="before"> 
+                    <field name="jenis_dokumen"/>
+                    <field name="no_aju"/>
+                    <field name="no_dokumen"/>
+                    <field name="tanggal_dokumen"/>
+                </xpath>
+            </field> 
+        </record>
+	</data>
+</odoo>

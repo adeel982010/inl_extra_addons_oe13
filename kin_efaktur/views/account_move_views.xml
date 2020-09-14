@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="kin_account_move_efaktur_form_view" model="ir.ui.view">
+            <field name="name">kin.account.move.efaktur.form.view</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <field name="invoice_date" position="after">
+                    <field name="tax_date"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="kin_account_move_efaktur_tree_view" model="ir.ui.view">
+            <field name="name">account.move.efaktur.tree.view</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="l10n_id_efaktur.account_move_efaktur_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="l10n_id_tax_number" position="after">
+                    <field name="tax_date" optional="show"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="kin_view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">kin.account.move.select.l10n_id.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="l10n_id_efaktur.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <field name="l10n_id_tax_number" position="after">
+                    <field name="tax_date"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
