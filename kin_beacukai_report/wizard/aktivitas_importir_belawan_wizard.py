@@ -78,10 +78,9 @@ class AktivitasImportirBelawanWizard(models.TransientModel):
 
         query = """
                 SELECT 
-                    sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
-                    sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
-                    sml.qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
-                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice 
+                    MIN(sp.jenis_dokumen) AS jenis_dokumen, sp.no_dokumen, sp.tanggal_dokumen, MIN(sp.name) AS in_no, 
+                    MIN(sp.date_done) AS min_date, MIN(rp.name) AS nama_mitra,
+                    MIN(out.jenis_dok_out) AS jenis_out, MIN(out.no_dok_out) AS dok_no_out, MIN(out.tgl_dok_out) AS dok_date_out
                 FROM stock_move_line sml
                 LEFT JOIN stock_move sm ON sml.move_id = sm.id
                 LEFT JOIN stock_picking sp ON sml.picking_id=sp.id 
@@ -91,14 +90,28 @@ class AktivitasImportirBelawanWizard(models.TransientModel):
                 LEFT JOIN product_template pt ON pt.id=pp.product_tmpl_id
                 LEFT JOIN stock_picking_type spt ON spt.id=sm.picking_type_id
                 LEFT JOIN res_currency rc ON rc.id = sp.currency_id
+                LEFT JOIN (
+                    SELECT sml.lot_id, MIN(sp.jenis_dokumen) AS jenis_dok_out, MIN(sp.no_dokumen) AS no_dok_out, 
+                        MIN(sp.tanggal_dokumen) AS tgl_dok_out, SUM(qty_done) AS qty_out
+                    FROM stock_move_line sml
+                    LEFT JOIN stock_move sm ON sml.move_id = sm.id
+                    LEFT JOIN stock_picking sp ON sml.picking_id = sp.id
+                    WHERE  sm.state = 'done' 
+                    AND (sm.location_id = '21' AND sm.location_dest_id != '21')
+                    AND """ + where_start_date + """ 
+                    AND """ + where_end_date + """
+                    GROUP BY sml.lot_id
+                ) out ON out.lot_id = sml.lot_id
                 WHERE  sm.state = 'done' 
+                AND sp.jenis_dokumen != ''
                 AND (sm.location_id != '21' AND sm.location_dest_id = '21')
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """
+                GROUP BY sp.tanggal_dokumen, sp.no_dokumen
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC
             """
         self._cr.execute(query)
-        hasil = self._cr.fetchall()
+        vals = self._cr.fetchall()
 
         company = self.env.user.company_id.name
         start_date_format = start_date.strftime('%d/%m/%Y')
@@ -106,85 +119,68 @@ class AktivitasImportirBelawanWizard(models.TransientModel):
 
         worksheet.write_merge(2, 2, 0, 4, "" + str(company).upper(
         ), xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
-        worksheet.write_merge(3, 3, 0, 4, "LAPORAN AKTIVITAS IMPORTIR " + str(
-            export), xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
+        worksheet.write_merge(3, 3, 0, 4, "LAPORAN AKTIVITAS IMPORTIR", xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
         worksheet.write_merge(5, 5, 0, 1, "PERIODE : " + str(start_date_format) + " S.D " + str(
             end_date_format), xls_format.font_style(position='left', bold=1, fontos='black', font_height=200))
 
         row = 7
-        worksheet.write_merge(7, 8, 0, 0, "No", xls_format.font_style(
+        worksheet.write_merge(7, 8, 0, 0, "NO", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 1, 1, "Jenis Dokumen", xls_format.font_style(
+        worksheet.write_merge(7, 7, 1, 5, "DOKUMEN PEMASUKAN", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 2, 2, "No Aju", xls_format.font_style(
+        worksheet.write_merge(7, 7, 6, 9, "DOKUMEN PENGELUARAN", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 7, 3, 4, "Dokumen Pabean", xls_format.font_style(
+        worksheet.write(8, 1, "Jenis", xls_format.font_style(
+            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
+        worksheet.write(8, 2, "Nama Importir", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
         worksheet.write(8, 3, "Nomor", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
         worksheet.write(8, 4, "Tanggal", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 7, 5, 6, "Bukti Penerimaan Barang", xls_format.font_style(
+        worksheet.write(8, 5, "No. Bukti", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 5, "Nomor", xls_format.font_style(
+        worksheet.write(8, 6, "Tgl. Bukti", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 6, "Tanggal", xls_format.font_style(
+        worksheet.write(8, 7, "Jenis", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 7, 7, 8, "Invoice (IN)", xls_format.font_style(
+        worksheet.write(8, 8, "Nomor", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 7, "Nomor", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 8, "Tanggal", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 9, 9, "Pemasok/Pengirim", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 10, 10, "Kode Barang", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 11, 11, "Nama Barang", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 12, 12, "Sat", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 13, 13, "Jumlah", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 14, 14, "Currency", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 15, 15, "Nilai Barang", xls_format.font_style(
+        worksheet.write(8, 9, "Tanggal", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
 
         row += 2
         no = 1
-        for val in hasil:
+        for val in vals:
+            jenis_dokumen = val[0]
+            nomor_pabean = val[1]
+            tanggal_pabean = val[2]
+            nomor_penerimaan_barang = val[3]
+            tanggal_penerimaan_barang = val[4]
+            pemasok_pengirim = val[5]
+            jenis_dok_out = val[6]
+            no_dok_out = val[7]
+            tgl_dok_out = val[8]
+
             worksheet.write(row, 0, no, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 1, val[0], xls_format.font_style(
+            worksheet.write(row, 1, jenis_dokumen, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 2, val[13], xls_format.font_style(
+            worksheet.write(row, 2, pemasok_pengirim, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 3, val[1], xls_format.font_style(
+            worksheet.write(row, 3, nomor_pabean, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 4, str(val[2].strftime('%d/%m/%Y')), xls_format.font_style(
+            worksheet.write(row, 4, str(tanggal_pabean.strftime('%d/%m/%Y')), xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 5, val[3], xls_format.font_style(
+            worksheet.write(row, 5, nomor_penerimaan_barang, xls_format.font_style(
+                position='centerexport', border=1, fontos='black', font_height=200, color='false'))
+            worksheet.write(row, 6, str(tanggal_penerimaan_barang.strftime('%d/%m/%Y')), xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 6, str(val[4].strftime('%d/%m/%Y')), xls_format.font_style(
+            worksheet.write(row, 7, jenis_dok_out, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 7, val[14], xls_format.font_style(
+            worksheet.write(row, 8, no_dok_out, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 8, str(val[15].strftime('%d/%m/%Y')), xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 9, val[5], xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 10, val[6], xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 11, val[7], xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 12, val[8], xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 13, val[9], xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 14, val[12], xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 15, val[10], xls_format.font_style(
+            worksheet.write(row, 9, str(tgl_dok_out.strftime('%d/%m/%Y')), xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
             row += 1
             no += 1

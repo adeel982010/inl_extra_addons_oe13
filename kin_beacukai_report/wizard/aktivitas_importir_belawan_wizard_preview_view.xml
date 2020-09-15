@@ -18,7 +18,7 @@
                                     </center>
                                     <span><b>Periode : </b><t t-esc="start_date"/> - <t t-esc="start_end"/></span>
                                     <tr>
-                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>No</strong></th>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>NO</strong></th>
                                         <th class="text-center" colspan="6"><strong>DOKUMEN PEMASUKAN</strong></th>
                                         <th class="text-center" colspan="3"><strong>DOKUMEN PENGELUARAN</strong></th>
                                     </tr>
