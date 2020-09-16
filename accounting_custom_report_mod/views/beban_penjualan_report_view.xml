@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="beban_penjualan_report_wizard" model="ir.ui.view">
+            <field name="name">beban.penjualan.report.wizard</field>
+            <field name="model">beban.penjualan.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                        </group>
+                        <group>
+                            <field name="date_to"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button type="object" name="process_wizard" string="Process" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="beban_penjualan_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">Beban Penjualan Report</field>
+            <field name="res_model">beban.penjualan.report</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="beban_penjualan_report_menu" name="Beban Penjualan" action="beban_penjualan_report_wizard_action" parent="account.account_reports_legal_statements_menu" sequence="99" groups="account.group_account_user"/>
+    </data>
+</odoo>

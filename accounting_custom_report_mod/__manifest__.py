@@ -20,13 +20,14 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base','account'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'data/custom_report_data.xml',
         'views/accounting_custom_report_format_view.xml',
+        'views/beban_penjualan_report_view.xml',
         # 'views/templates.xml',
     ],
     # only loaded in demonstration mode
