@@ -1,0 +1,34 @@
+<odoo>
+    <data>
+        <record model="report.paperformat" id="accounting_custom_report_portrait_format">
+            <field name="name">Accounting Custom Report Portrait Format</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_width">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">17</field>
+            <field name="margin_right">7</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">96</field>
+        </record>
+
+        <report 
+            string="Beban Penjualan" 
+            id="beban_penjualan_report_action" 
+            model="beban.penjualan.report" 
+            report_type="qweb-html"
+            attachment_use="False"
+            paperformat="accounting_custom_report_portrait_format"
+            name="accounting_custom_report_mod.beban_penjualan_report_template" 
+            file="accounting_custom_report_mod.beban_penjualan_report_template"
+            print_report_name="'Beban Penjualan - ' + str(object.date_from) + ' - ' + str(object.date_to)"
+            menu="False"
+        />
+       
+
+    </data>
+</odoo>

@@ -1,0 +1,135 @@
+<odoo>
+    <data>
+        <template id="beban_penjualan_report_template">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="doc">
+
+                    <div class="header" style="font-size:10pt;">
+                        <div class="row">
+                            <div class="col-3">
+                                <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                            </div>
+                            <div class="col-2 offset-2 text-center">
+                                <span t-esc="user.company_id.name"/>
+                            </div>
+                            <div class="col-2 offset-3 text-right">
+                                <ul class="list-inline">
+                                    <li class="list-inline-item">
+                                        <span class="page"/>
+                                    </li>
+                                    <li class="list-inline-item">/</li>
+                                    <li class="list-inline-item">
+                                        <span class="topage"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="page">
+
+                        <style type="text/css">
+                            .page{
+                                font-size:10pt;
+                            }
+
+                            table.table-bordered, table.table-bordered thead tr th, table.table-bordered tbody tr td {
+                                border: black thin solid !important;
+                            }
+                                   
+                            tr.row-partner td{
+                                border-top:thin solid black;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <!-- border-bottom:thin solid black; -->
+                            }
+                            tr.row-order td{
+                                border-top:thin solid grey;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <!-- border-bottom:thin solid black; -->
+                            }
+                            .subtotal-order div{
+                                padding-top:0;
+                                padding-bottom:0;
+                            }
+                            .table tbody tr td{
+                                padding:0;
+                                margin:0;
+                                border-spacing: 0;
+                            }   
+                        </style>
+
+                        <h3>Beban Penjualan</h3>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <b>Date</b>
+                                <br/>
+                                <span t-field="doc.date_from" />
+                                <span t-if="doc.date_from and doc.date_to"> - </span>
+                                <span t-field="doc.date_from" />
+                            </div>
+                            <div class="col-4"></div>
+                            <div class="col-4"></div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Ref</th>
+                                            <th class="text-center">Uraian</th>
+                                            <th class="text-center">Bulan ini</th>
+                                            <th class="text-center">S/d. bulan ini</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <t t-set="accounts" t-value="doc.get_accounts()" />
+
+                                        <t t-foreach="accounts" t-as="acc">
+
+                                            <t t-set="move_lines" t-value="doc.account_move_lines.filtered(lambda x : x.account_id.id == acc.id)" />
+                                            <t t-set="to_this_month_move_lines" t-value="doc.to_this_month_move_lines.filtered(lambda x : x.account_id.id == acc.id)" />
+
+                                            <tr>
+                                                <td>
+                                                    <span t-field="acc.code" />
+                                                </td>
+                                                <td>
+                                                    <span t-field="acc.name" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(move_lines.mapped('balance'))" t-options='{"widget": "float", "precision": 2}'/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-esc="sum(to_this_month_move_lines.mapped('balance'))" t-options='{"widget": "float", "precision": 2}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="footer" style="font-size:6pt;">
+                        <div class="row">
+                            <div class="col-4">
+                                <span>Printed by </span>
+                                <b t-esc="user.name" />
+                            </div>
+                            <div class="col-4 text-center">
+                                <span class="page" style="background:black;color:white;padding:2px;" />
+                                <span> / </span>
+                                <span class="topage" />
+                            </div>
+                            <div class="col-4 text-right">
+                                <span>Printed at </span>
+                                <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%m-%Y %H:%M')"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
