@@ -1,0 +1,10 @@
+<odoo>
+    <data noupdate="1">
+
+        <record id="accounting_custom_beban_penjualan_report" model="accounting.custom.report.format">
+            <field name="name">Beban Penjualan</field>
+            <field name="account_type">account</field>
+        </record>
+
+    </data>
+</odoo>

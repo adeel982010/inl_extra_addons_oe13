@@ -1,0 +1,52 @@
+<odoo>
+    <data>
+        <record id="accounting_custom_report_format_form" model="ir.ui.view">
+            <field name="name">accounting.custom.report.format.form</field>
+            <field name="model">accounting.custom.report.format</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="account_type"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Accounts" attrs="{'invisible':[('account_type', '=', 'account.type')]}">
+                                <field name="account_account_ids"/>
+                            </page>
+                            <page string="Account Types" attrs="{'invisible':[('account_type', '=', 'account')]}">
+                                <field name="account_type_ids"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="accounting_custom_report_format_tree" model="ir.ui.view">
+            <field name="name">accounting.custom.report.format.tree</field>
+            <field name="model">accounting.custom.report.format</field>
+            <field name="arch" type="xml">
+                <tree string="" create="false" delete="false" >
+                    <field name="name" />
+                    <field name="account_type" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="accounting_custom_report_format_form_action" model="ir.actions.act_window">
+            <field name="name">Accounting Custom Report</field>
+            <field name="res_model">accounting.custom.report.format</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="_menu" name="Custom Report" action="accounting_custom_report_format_form_action" parent="account.account_management_menu" sequence=""/>
+    </data>
+</odoo>
