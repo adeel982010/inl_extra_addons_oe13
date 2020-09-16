@@ -26,3 +26,15 @@ from . import posisi_stok_barang_belawan_wizard
 from . import posisi_stok_barang_belawan_wizard_preview
 from . import aktivitas_importir_belawan_wizard
 from . import aktivitas_importir_belawan_wizard_preview
+from . import inventory_report_penerimaan_ktanjung_wizard
+from . import inventory_report_penerimaan_ktanjung_wizard_preview
+from . import inventory_report_pengeluaran_ktanjung_wizard
+from . import inventory_report_pengeluaran_ktanjung_wizard_preview
+from . import inventory_report_mutasi_ktanjung_wizard
+from . import inventory_report_mutasi_ktanjung_wizard_preview
+from . import posisi_barang_per_dokumen_ktanjung_wizard
+from . import posisi_barang_per_dokumen_ktanjung_wizard_preview
+from . import posisi_stok_barang_ktanjung_wizard
+from . import posisi_stok_barang_ktanjung_wizard_preview
+from . import aktivitas_importir_ktanjung_wizard
+from . import aktivitas_importir_ktanjung_wizard_preview

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-        <template id="report_inventory_penerimaan_belawan_document">
+        <template id="report_inventory_penerimaan_ktanjung_document">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.internal_layout">
@@ -13,7 +13,7 @@
                                     <t t-set="start_end" t-value="time.strftime('%d/%m/%Y',time.strptime(str(o.date_end),'%Y-%m-%d'))"/>
                                     <center>
                                         <h4><b><span t-field="user.company_id.name" /></b></h4>
-                                        <h4><b>Laporan Pemasukan Barang Per Dokumen <t t-esc="o.export_report"/> (Belawan)</b></h4>
+                                        <h4><b>Laporan Pemasukan Barang Per Dokumen <t t-esc="o.export_report"/> (Kuala Tanjung)</b></h4>
                                         <br/>
                                     </center>
                                     <span><b>Periode : </b><t t-esc="start_date"/> - <t t-esc="start_end"/></span>
@@ -101,14 +101,14 @@
 
         <report 
             string="Report PDF Penerimaan Barang" 
-            id="report_inventory_penerimaan_belawan"
-            model="inventory.export.penerimaan.belawan.report.wizard"
+            id="report_inventory_penerimaan_ktanjung"
+            model="inventory.export.penerimaan.ktanjung.report.wizard"
             report_type="qweb-pdf"
-            name="kin_beacukai_report.report_inventory_penerimaan_belawan_document"
-            file="kin_beacukai_report.report_inventory_penerimaan_belawan_document"
+            name="kin_beacukai_report.report_inventory_penerimaan_ktanjung_document"
+            file="kin_beacukai_report.report_inventory_penerimaan_ktanjung_document"
         />
         
-        <record id="paperformat_pdf_inventory_penerimaan_belawan" model="report.paperformat">
+        <record id="paperformat_pdf_inventory_penerimaan_ktanjung" model="report.paperformat">
             <field name="name">Paperformat PDF Inventory Penerimaan Barang</field>
             <field name="default" eval="True"/>
             <field name="format">A4</field>
@@ -121,7 +121,7 @@
             <field name="header_spacing">25</field>
             <field name="dpi">90</field>
             <field name="report_ids" eval="[
-                (4, ref('kin_beacukai_report.report_inventory_penerimaan_belawan')),
+                (4, ref('kin_beacukai_report.report_inventory_penerimaan_ktanjung')),
             ]"/>
         </record>
     </data>

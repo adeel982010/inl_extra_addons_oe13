@@ -15,26 +15,26 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 from . import xls_format
 
 
-class InventoryExcelPenerimaanBelawanExportSummary(models.TransientModel):
-    _name = "inventory.excel.penerimaan.belawan.export.summary"
+class InventoryExcelPenerimaanKtanjungExportSummary(models.TransientModel):
+    _name = "inventory.excel.penerimaan.ktanjung.export.summary"
 
     file = fields.Binary(
         "Click On Save As Button To Download File", readonly=True)
-    name = fields.Char("Name", size=32, default='laporan_pemasukan_belawan.xls')
+    name = fields.Char("Name", size=32, default='laporan_pemasukan_ktanjung.xls')
 
 
-class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
-    _name = 'inventory.export.penerimaan.belawan.report.wizard'
+class InventoryExportPenerimaanKtanjungReportWizard(models.TransientModel):
+    _name = 'inventory.export.penerimaan.ktanjung.report.wizard'
 
     date_start = fields.Date(
         'Date Start', default=lambda *a: datetime.today().date() + relativedelta(day=1))
     date_end = fields.Date(
         'Date End', default=lambda *a: datetime.today().date() + relativedelta(day=31))
-    location_ids = fields.Many2many('stock.location', 'penerimaan_belawan_locaton_rel', 'stock_card_id',
+    location_ids = fields.Many2many('stock.location', 'penerimaan_ktanjung_locaton_rel', 'stock_card_id',
                                     'location_id', 'Lokasi', copy=False, domain=[('usage', '=', 'internal')])
-    categ_ids = fields.Many2many('product.category', 'penerimaan_belawan_categ_rel', 'stock_card_id',
+    categ_ids = fields.Many2many('product.category', 'penerimaan_ktanjung_categ_rel', 'stock_card_id',
                                  'categ_id', 'Kategori Produk', copy=False)
-    product_ids = fields.Many2many('product.product', 'penerimaan_belawan_product_rel', 'stock_card_id',
+    product_ids = fields.Many2many('product.product', 'penerimaan_ktanjung_product_rel', 'stock_card_id',
                                    'product_id', 'Produk', copy=False, domain=[('type', '=', 'product')])
     export_report = fields.Selection([('BC 1.6', 'BC 1.6'), ('BC 2.3', 'BC 2.3'), ('BC 2.6.2', 'BC 2.6.2'), (
         'BC 2.7', 'BC 2.7'), ('BC 4.0', 'BC 4.0')], "Report Type", default='BC 2.3')
@@ -136,7 +136,7 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
                 LEFT JOIN stock_picking_type spt ON spt.id=sm.picking_type_id
                 LEFT JOIN res_currency rc ON rc.id = sp.currency_id
                 WHERE  sm.state = 'done' 
-                AND (sm.location_id != '21' AND sm.location_dest_id = '21')
+                AND (sm.location_id != '29' AND sm.location_dest_id = '29')
                 AND sp.jenis_dokumen = '""" + where_export + """' 
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """
@@ -154,7 +154,7 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
         worksheet.write_merge(2, 2, 0, 4, "" + str(company).upper(
         ), xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
         worksheet.write_merge(3, 3, 0, 4, "LAPORAN PEMASUKAN BARANG PER DOKUMEN " + str(
-            export) + " (Belawan)", xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
+            export) + " (Kuala Tanjung)", xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
         worksheet.write_merge(5, 5, 0, 1, "PERIODE : " + str(start_date_format) + " S.D " + str(
             end_date_format), xls_format.font_style(position='left', bold=1, fontos='black', font_height=200))
 
@@ -244,11 +244,11 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
         # fp.close()
         # res = base64.b64encode(data)
         res = base64.encodestring(fp.getvalue())
-        res_id = self.env['inventory.excel.penerimaan.belawan.export.summary'].create(
-            {'name': 'Laporan Pemasukan Barang (Belawan).xls', 'file': res})
+        res_id = self.env['inventory.excel.penerimaan.ktanjung.export.summary'].create(
+            {'name': 'Laporan Pemasukan Barang (Kuala Tanjung).xls', 'file': res})
 
         return {
             'type': 'ir.actions.act_url',
-            'url': '/web/binary/download_document?model=inventory.excel.penerimaan.belawan.export.summary&field=file&id=%s&filename=Laporan Pemasukan Barang(Belawan).xls' % (res_id.id),
+            'url': '/web/binary/download_document?model=inventory.excel.penerimaan.ktanjung.export.summary&field=file&id=%s&filename=Laporan Pemasukan Barang(Kuala Tanjung).xls' % (res_id.id),
             'target': 'new',
         }

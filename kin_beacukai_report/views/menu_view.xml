@@ -59,7 +59,7 @@
         <field name="target">new</field>
     </record>
 
-    <!--    Bwlawan-->
+    <!--    Belawan-->
     <record id="action_print_penerimaan_belawan_inventory_report" model="ir.actions.act_window">
         <field name="name">Penerimaan Barang Belawan</field>
         <field name="res_model">inventory.export.penerimaan.belawan.report.wizard</field>
@@ -103,6 +103,55 @@
     <record id="action_posisi_stok_barang_belawan" model="ir.actions.act_window">
         <field name="name">Posisi Stok Barang Belawan</field>
         <field name="res_model">posisi.stok.barang.belawan.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!--    Kuala Tanjung-->
+    <record id="action_print_penerimaan_ktanjung_inventory_report" model="ir.actions.act_window">
+        <field name="name">Penerimaan Barang Kuala Tanjung</field>
+        <field name="res_model">inventory.export.penerimaan.ktanjung.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_pengeluaran_ktanjung_inventory_report" model="ir.actions.act_window">
+        <field name="name">Pengeluaran Barang Kuala Tanjung</field>
+        <field name="res_model">inventory.export.pengeluaran.ktanjung.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_print_mutasi_ktanjung_inventory_export_report" model="ir.actions.act_window">
+        <field name="name">Mutasi Barang Kuala Tanjung</field>
+        <field name="res_model">inventory.export.mutasi.ktanjung.report.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_aktivitas_importir_ktanjung" model="ir.actions.act_window">
+        <field name="name">Aktivitas Importir Kuala Tanjung</field>
+        <field name="res_model">aktivitas.importir.ktanjung.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_posisi_barang_per_dokumen_ktanjung" model="ir.actions.act_window">
+        <field name="name">Posisi Barang per Dokumen Kuala Tanjung</field>
+        <field name="res_model">posisi.barang.per.dokumen.ktanjung.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_posisi_stok_barang_ktanjung" model="ir.actions.act_window">
+        <field name="name">Posisi Stok Barang Kuala Tanjung</field>
+        <field name="res_model">posisi.stok.barang.ktanjung.wizard</field>
         <field name="binding_view_types">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
@@ -173,6 +222,34 @@
     <menuitem action="action_posisi_stok_barang_belawan"
             id="menu_posisi_stok_barang_belawan"
             parent="menu_bea_cukai_belawan_report" sequence="406"/>
+
+    <!--    Kuala Tanjung -->
+    <menuitem id="menu_bea_cukai_ktanjung_report" name="Reporting Kuala Tanjung"
+            parent="menu_bea_cukai" sequence="5"/>
+
+    <menuitem action="action_print_penerimaan_ktanjung_inventory_report"
+            id="menu_bea_cukai_report_penerimaan_ktanjung"
+            parent="menu_bea_cukai_ktanjung_report" sequence="501"/>
+
+    <menuitem action="action_print_pengeluaran_ktanjung_inventory_report"
+            id="menu_bea_cukai_report_pengeluaran_ktanjung"
+            parent="menu_bea_cukai_ktanjung_report" sequence="502"/>
+
+    <menuitem action="action_print_mutasi_ktanjung_inventory_export_report"
+            id="menu_bea_cukai_report_mutasi_ktanjung"
+            parent="menu_bea_cukai_ktanjung_report" sequence="503"/>
+
+    <menuitem action="action_aktivitas_importir_ktanjung"
+            id="menu_aktivitas_importir_ktanjung"
+            parent="menu_bea_cukai_ktanjung_report" sequence="504"/>
+
+    <menuitem action="action_posisi_barang_per_dokumen_ktanjung"
+            id="menu_posisi_barang_per_dokumen_ktanjung"
+            parent="menu_bea_cukai_ktanjung_report" sequence="505"/>
+
+    <menuitem action="action_posisi_stok_barang_ktanjung"
+            id="menu_posisi_stok_barang_ktanjung"
+            parent="menu_bea_cukai_ktanjung_report" sequence="506"/>
 
 
 </odoo>
