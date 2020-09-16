@@ -15,29 +15,21 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 from . import xls_format
 
 
-class InventoryExcelPenerimaanBelawanExportSummary(models.TransientModel):
-    _name = "inventory.excel.penerimaan.belawan.export.summary"
+class PosisiStokBarangKtanjungExportSummary(models.TransientModel):
+    _name = "posisi.stok.barang.ktanjung.export.summary"
 
     file = fields.Binary(
         "Click On Save As Button To Download File", readonly=True)
-    name = fields.Char("Name", size=32, default='laporan_pemasukan_belawan.xls')
+    name = fields.Char("Name", size=32, default='laporan_posisi_stok_barang_ktanjung.xls')
 
 
-class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
-    _name = 'inventory.export.penerimaan.belawan.report.wizard'
+class PosisiStokBarangKtanjungWizard(models.TransientModel):
+    _name = 'posisi.stok.barang.ktanjung.wizard'
 
     date_start = fields.Date(
         'Date Start', default=lambda *a: datetime.today().date() + relativedelta(day=1))
     date_end = fields.Date(
         'Date End', default=lambda *a: datetime.today().date() + relativedelta(day=31))
-    location_ids = fields.Many2many('stock.location', 'penerimaan_belawan_locaton_rel', 'stock_card_id',
-                                    'location_id', 'Lokasi', copy=False, domain=[('usage', '=', 'internal')])
-    categ_ids = fields.Many2many('product.category', 'penerimaan_belawan_categ_rel', 'stock_card_id',
-                                 'categ_id', 'Kategori Produk', copy=False)
-    product_ids = fields.Many2many('product.product', 'penerimaan_belawan_product_rel', 'stock_card_id',
-                                   'product_id', 'Produk', copy=False, domain=[('type', '=', 'product')])
-    export_report = fields.Selection([('BC 1.6', 'BC 1.6'), ('BC 2.3', 'BC 2.3'), ('BC 2.6.2', 'BC 2.6.2'), (
-        'BC 2.7', 'BC 2.7'), ('BC 4.0', 'BC 4.0')], "Report Type", default='BC 2.3')
 
     @api.onchange('date_start', 'date_end')
     def onchange_date(self):
@@ -57,20 +49,12 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
         end_date = data.get('date_end', False)
         if start_date and end_date and end_date < start_date:
             raise Warning(_("End date should be greater than start date!"))
-        res_user = self.env["res.users"].browse(self._uid)
-        export = data.get('export_report', False)
 
         # Create Inventory Export report in Excel file.
         workbook = xlwt.Workbook(style_compression=2)
         worksheet = workbook.add_sheet('Sheet 1')
         font = xlwt.Font()
         font.bold = True
-        header = xlwt.easyxf('font: bold 1, height 280')
-        # start_date = datetime.strptime(str(context.get("date_from")), DEFAULT_SERVER_DATE_FORMAT)
-        # start_date_formate = start_date.strftime('%d/%m/%Y')
-        # end_date = datetime.strptime(str(context.get("date_to")), DEFAULT_SERVER_DATE_FORMAT)
-        # end_date_formate = end_date.strftime('%d/%m/%Y')
-        # start_date_to_end_date = tools.ustr(start_date_formate) + ' To ' + tools.ustr(end_date_formate)
 
         style = xlwt.easyxf('align: wrap yes')
         worksheet.row(0).height = 500
@@ -84,171 +68,182 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
         border_style.borders = borders
         border_style1 = xlwt.easyxf('font: bold 1')
         border_style1.borders = borders
-        style = xlwt.easyxf('align: wrap yes', style)
 
-        ids_location = []
-        ids_categ = []
-        ids_product = []
-        where_end_date_awal = " sm.date is null "
         where_start_date = " 1=1 "
         if start_date:
             where_start_date = " sm.date + interval '7 hour' >= '%s 00:00:00' " % start_date
-            where_end_date_awal = " sm.date + interval '7 hour' < '%s 00:00:00' " % start_date
         where_end_date = " 1=1 "
         if end_date:
             where_end_date = " sm.date + interval '7 hour' <= '%s 23:59:59'" % end_date
-        where_location = " 1=1 "
-        if ids_location:
-            where_location = """(sm.location_id in %s 
-            or sm.location_dest_id in %s)""" % (str(tuple(ids_location)).replace(',)', ')'),
-                                                str(tuple(ids_location)).replace(',)', ')'))
-        where_categ = " 1=1 "
-        if ids_categ:
-            where_categ = "pt.categ_id in %s" % str(
-                tuple(ids_categ)).replace(',)', ')')
-        where_product = " 1=1 "
-        if ids_product:
-            where_product = "pp.id in %s" % str(
-                tuple(ids_product)).replace(',)', ')')
-        if export == "BC 2.3":
-            where_export = "BC 2.3"
-        elif export == "BC 2.6.2":
-            where_export = "BC 2.6.2"
-        elif export == "BC 2.7":
-            where_export = "BC 2.7"
-        elif export == "BC 4.0":
-            where_export = "BC 4.0"
-        elif export == "BC 1.6":
-            where_export = "BC 1.6"
+
         query = """
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
                     sml.qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
-                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice 
+                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice,
+                    out.jenis_dok_out, out.no_dok_out, out.tgl_dok_out, out.qty_out,
+                    po.name, po.date_order, sm.sequence
                 FROM stock_move_line sml
                 LEFT JOIN stock_move sm ON sml.move_id = sm.id
                 LEFT JOIN stock_picking sp ON sml.picking_id=sp.id 
+                LEFT JOIN purchase_order_stock_picking_rel po_rel ON po_rel.stock_picking_id = sp.id
+                LEFT JOIN purchase_order po ON po.id = po_rel.purchase_order_id
                 LEFT JOIN res_partner rp ON sp.partner_id=rp.id
                 LEFT JOIN product_product pp ON pp.id=sml.product_id
                 LEFT JOIN uom_uom uu ON uu.id=sml.product_uom_id
                 LEFT JOIN product_template pt ON pt.id=pp.product_tmpl_id
                 LEFT JOIN stock_picking_type spt ON spt.id=sm.picking_type_id
                 LEFT JOIN res_currency rc ON rc.id = sp.currency_id
+                LEFT JOIN (
+                    SELECT sml.lot_id, MIN(sp.jenis_dokumen) AS jenis_dok_out, MIN(sp.no_dokumen) AS no_dok_out, 
+                        MIN(sp.tanggal_dokumen) AS tgl_dok_out, SUM(qty_done) AS qty_out
+                    FROM stock_move_line sml
+                    LEFT JOIN stock_move sm ON sml.move_id = sm.id
+                    LEFT JOIN stock_picking sp ON sml.picking_id = sp.id
+                    WHERE  sm.state = 'done' 
+                    AND (sm.location_id = '29' AND sm.location_dest_id != '29')
+                    AND """ + where_start_date + """ 
+                    AND """ + where_end_date + """
+                    GROUP BY sml.lot_id
+                ) out ON out.lot_id = sml.lot_id
                 WHERE  sm.state = 'done' 
-                AND (sm.location_id != '21' AND sm.location_dest_id = '21')
-                AND sp.jenis_dokumen = '""" + where_export + """' 
+                AND (sm.location_id != '29' AND sm.location_dest_id = '29')
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC
             """
         self._cr.execute(query)
-        hasil = self._cr.fetchall()
+        vals = self._cr.fetchall()
 
         company = self.env.user.company_id.name
         start_date_format = start_date.strftime('%d/%m/%Y')
         end_date_format = end_date.strftime('%d/%m/%Y')
-        # date_format = xlwt.XFStyle()
-        # date_format.num_format_str = 'dd/mm/yyyy'
 
         worksheet.write_merge(2, 2, 0, 4, "" + str(company).upper(
         ), xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
-        worksheet.write_merge(3, 3, 0, 4, "LAPORAN PEMASUKAN BARANG PER DOKUMEN " + str(
-            export) + " (Belawan)", xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
+        worksheet.write_merge(3, 3, 0, 4, "LAPORAN POSISI BARANG PER DOKUMEN (Kuala Tanjung)", xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
         worksheet.write_merge(5, 5, 0, 1, "PERIODE : " + str(start_date_format) + " S.D " + str(
             end_date_format), xls_format.font_style(position='left', bold=1, fontos='black', font_height=200))
 
         row = 7
-        worksheet.write_merge(7, 8, 0, 0, "No", xls_format.font_style(
+        worksheet.write_merge(7, 8, 0, 0, "NO", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 1, 1, "Jenis Dokumen", xls_format.font_style(
+        worksheet.write_merge(7, 7, 1, 8, "DOKUMEN PEMASUKAN", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 2, 2, "No Aju", xls_format.font_style(
+        worksheet.write_merge(7, 7, 9, 14, "DOKUMEN PENGELUARAN", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 7, 3, 4, "Dokumen Pabean", xls_format.font_style(
+        worksheet.write_merge(7, 7, 15, 16, "SALDO BARANG", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 3, "Nomor", xls_format.font_style(
+        worksheet.write(8, 1, "Nomor", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 4, "Tanggal", xls_format.font_style(
+        worksheet.write(8, 2, "Tanggal", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 7, 5, 6, "Bukti Penerimaan Barang", xls_format.font_style(
+        worksheet.write(8, 3, "No. Invoice", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 5, "Nomor", xls_format.font_style(
+        worksheet.write(8, 4, "Tgl. Invoice", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 6, "Tanggal", xls_format.font_style(
+        worksheet.write(8, 5, "Seri", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 7, 7, 8, "Invoice (IN)", xls_format.font_style(
+        worksheet.write(8, 6, "Kode Barang", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 7, "Nomor", xls_format.font_style(
+        worksheet.write(8, 7, "Nama Barang", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 8, "Tanggal", xls_format.font_style(
+        worksheet.write(8, 8, "Satuan", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 9, 9, "Pemasok/Pengirim", xls_format.font_style(
+        worksheet.write(8, 9, "Jumlah", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 10, 10, "Kode Barang", xls_format.font_style(
+        worksheet.write(8, 10, "Jenis", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 11, 11, "Nama Barang", xls_format.font_style(
+        worksheet.write(8, 11, "Nomor", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 12, 12, "Sat", xls_format.font_style(
+        worksheet.write(8, 12, "Tanggal", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 13, 13, "Jumlah", xls_format.font_style(
+        worksheet.write(8, 13, "Satuan", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 14, 14, "Currency", xls_format.font_style(
+        worksheet.write(8, 14, "Jumlah", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 15, 15, "Nilai Barang", xls_format.font_style(
+        worksheet.write(8, 15, "Jumlah", xls_format.font_style(
+            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
+        worksheet.write(8, 16, "Satuan", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
 
         row += 2
         no = 1
-        for val in hasil:
+        for val in vals:
+            jenis_dokumen = val[0]
+            nomor_pabean = val[1]
+            tanggal_pabean = val[2]
+            nomor_penerimaan_barang = val[3]
+            tanggal_penerimaan_barang = val[4]
+            pemasok_pengirim = val[5]
+            kode_barang = val[6]
+            nama_barang = val[7]
+            satuan = val[8]
+            jumlah = val[9]
+            nilai_barang = val[10]
+            currency = val[12]
+            no_aju = val[13]
+            no_invoice = val[14]
+            tanggal_invoice = val[15]
+            jenis_dok_out = val[16]
+            no_dok_out = val[17]
+            tgl_dok_out = val[18]
+            qty_out = val[19]
+            qty_saldo = val[9] - val[19]
+            po_no = val[20]
+            po_date = ''
+            if val[21]:
+                po_date = str(val[21].strftime('%d/%m/%Y'))
+
+            seri = val[22]
+
             worksheet.write(row, 0, no, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 1, val[0], xls_format.font_style(
+            worksheet.write(row, 1, po_no, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 2, val[13], xls_format.font_style(
+            worksheet.write(row, 2, po_date, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 3, val[1], xls_format.font_style(
+            worksheet.write(row, 3, no_invoice, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 4, str(val[2].strftime('%d/%m/%Y')), xls_format.font_style(
+            worksheet.write(row, 4, str(tanggal_invoice.strftime('%d/%m/%Y')), xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 5, val[3], xls_format.font_style(
+            worksheet.write(row, 5, seri, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 6, str(val[4].strftime('%d/%m/%Y')), xls_format.font_style(
+            worksheet.write(row, 6, kode_barang, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 7, val[14], xls_format.font_style(
+            worksheet.write(row, 7, nama_barang, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 8, str(val[15].strftime('%d/%m/%Y')), xls_format.font_style(
+            worksheet.write(row, 8, satuan, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 9, val[5], xls_format.font_style(
+            worksheet.write(row, 9, jumlah, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 10, val[6], xls_format.font_style(
+            worksheet.write(row, 10, jenis_dok_out, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 11, val[7], xls_format.font_style(
+            worksheet.write(row, 11, no_dok_out, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 12, val[8], xls_format.font_style(
+            worksheet.write(row, 12, str(tgl_dok_out.strftime('%d/%m/%Y')), xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 13, val[9], xls_format.font_style(
+            worksheet.write(row, 13, satuan, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 14, val[12], xls_format.font_style(
+            worksheet.write(row, 14, qty_out, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 15, val[10], xls_format.font_style(
+            worksheet.write(row, 15, qty_saldo, xls_format.font_style(
+                position='center', border=1, fontos='black', font_height=200, color='false'))
+            worksheet.write(row, 16, satuan, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
             row += 1
             no += 1
 
         fp = BytesIO()
         workbook.save(fp)
-        # Odoo10
-        # fp.seek(0)
-        # data = fp.read()
-        # fp.close()
-        # res = base64.b64encode(data)
+
         res = base64.encodestring(fp.getvalue())
-        res_id = self.env['inventory.excel.penerimaan.belawan.export.summary'].create(
-            {'name': 'Laporan Pemasukan Barang (Belawan).xls', 'file': res})
+        res_id = self.env['posisi.stok.barang.ktanjung.export.summary'].create(
+            {'name': 'Laporan Posisi Stok Barang (Kuala Tanjung).xls', 'file': res})
 
         return {
             'type': 'ir.actions.act_url',
-            'url': '/web/binary/download_document?model=inventory.excel.penerimaan.belawan.export.summary&field=file&id=%s&filename=Laporan Pemasukan Barang(Belawan).xls' % (res_id.id),
+            'url': '/web/binary/download_document?model=posisi.stok.barang.ktanjung.export.summary&field=file&id=%s&filename=Laporan Posisi Stok Barang (Kuala Tanjung).xls' % (res_id.id),
             'target': 'new',
         }

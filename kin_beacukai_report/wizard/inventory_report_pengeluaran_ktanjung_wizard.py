@@ -15,29 +15,29 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 from . import xls_format
 
 
-class InventoryExcelPenerimaanBelawanExportSummary(models.TransientModel):
-    _name = "inventory.excel.penerimaan.belawan.export.summary"
+class InventoryExcelPengeluaranKtanjungExportSummary(models.TransientModel):
+    _name = "inventory.excel.pengeluaran.ktanjung.export.summary"
 
     file = fields.Binary(
         "Click On Save As Button To Download File", readonly=True)
-    name = fields.Char("Name", size=32, default='laporan_pemasukan_belawan.xls')
+    name = fields.Char("Name", size=32, default='laporan_pengeluaran_ktanjung.xls')
 
 
-class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
-    _name = 'inventory.export.penerimaan.belawan.report.wizard'
+class InventoryExportPengeluaranKtanjungReportWizard(models.TransientModel):
+    _name = 'inventory.export.pengeluaran.ktanjung.report.wizard'
 
     date_start = fields.Date(
         'Date Start', default=lambda *a: datetime.today().date() + relativedelta(day=1))
     date_end = fields.Date(
         'Date End', default=lambda *a: datetime.today().date() + relativedelta(day=31))
-    location_ids = fields.Many2many('stock.location', 'penerimaan_belawan_locaton_rel', 'stock_card_id',
+    location_ids = fields.Many2many('stock.location', 'pengeluaran_ktanjung_locaton_rel', 'stock_card_id',
                                     'location_id', 'Lokasi', copy=False, domain=[('usage', '=', 'internal')])
-    categ_ids = fields.Many2many('product.category', 'penerimaan_belawan_categ_rel', 'stock_card_id',
+    categ_ids = fields.Many2many('product.category', 'pengeluaran_ktanjung_categ_rel', 'stock_card_id',
                                  'categ_id', 'Kategori Produk', copy=False)
-    product_ids = fields.Many2many('product.product', 'penerimaan_belawan_product_rel', 'stock_card_id',
+    product_ids = fields.Many2many('product.product', 'pengeluaran_ktanjung_product_rel', 'stock_card_id',
                                    'product_id', 'Produk', copy=False, domain=[('type', '=', 'product')])
-    export_report = fields.Selection([('BC 1.6', 'BC 1.6'), ('BC 2.3', 'BC 2.3'), ('BC 2.6.2', 'BC 2.6.2'), (
-        'BC 2.7', 'BC 2.7'), ('BC 4.0', 'BC 4.0')], "Report Type", default='BC 2.3')
+    export_report = fields.Selection([('BC 2.5', 'BC 2.5'), ('BC 2.6.1', 'BC 2.6.1'), (
+        'BC 2.7', 'BC 2.7'), ('BC 3.0', 'BC 3.0'), ('BC 4.1', 'BC 4.1')], "Report Type", default='BC 2.5')
 
     @api.onchange('date_start', 'date_end')
     def onchange_date(self):
@@ -110,37 +110,39 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
         if ids_product:
             where_product = "pp.id in %s" % str(
                 tuple(ids_product)).replace(',)', ')')
-        if export == "BC 2.3":
-            where_export = "BC 2.3"
-        elif export == "BC 2.6.2":
-            where_export = "BC 2.6.2"
+        if export == "BC 2.5":
+            where_export = "BC 2.5"
+        elif export == "BC 2.6.1":
+            where_export = "BC 2.6.1"
         elif export == "BC 2.7":
             where_export = "BC 2.7"
-        elif export == "BC 4.0":
-            where_export = "BC 4.0"
-        elif export == "BC 1.6":
-            where_export = "BC 1.6"
+        elif export == "BC 3.0":
+            where_export = "BC 3.0"
+        elif export == "BC 3.3":
+            where_export = "BC 3.3"
+        elif export == "BC 4.1":
+            where_export = "BC 4.1"
         query = """
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
-                    sml.qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
-                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice 
-                FROM stock_move_line sml
-                LEFT JOIN stock_move sm ON sml.move_id = sm.id
-                LEFT JOIN stock_picking sp ON sml.picking_id=sp.id 
+                    sm.product_uom_qty, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
+                    sp.no_aju 
+                FROM stock_move sm 
+                INNER JOIN stock_picking sp ON sm.picking_id=sp.id 
                 LEFT JOIN res_partner rp ON sp.partner_id=rp.id
-                LEFT JOIN product_product pp ON pp.id=sml.product_id
-                LEFT JOIN uom_uom uu ON uu.id=sml.product_uom_id
+                LEFT JOIN product_product pp ON pp.id=sm.product_id
+                LEFT JOIN uom_uom uu ON uu.id=sm.product_uom
                 LEFT JOIN product_template pt ON pt.id=pp.product_tmpl_id
                 LEFT JOIN stock_picking_type spt ON spt.id=sm.picking_type_id
+                LEFT JOIN sale_order_line sol ON sol.id=sm.sale_line_id
                 LEFT JOIN res_currency rc ON rc.id = sp.currency_id
-                WHERE  sm.state = 'done' 
-                AND (sm.location_id != '21' AND sm.location_dest_id = '21')
-                AND sp.jenis_dokumen = '""" + where_export + """' 
+                WHERE sm.state = 'done' 
+                AND (sm.location_id = '29' AND sm.location_dest_id != '29')
                 AND """ + where_start_date + """ 
-                AND """ + where_end_date + """
-                ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC
+                AND """ + where_end_date + """                  
+                AND sp.jenis_dokumen = '""" + where_export + """'
+                ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC 
             """
         self._cr.execute(query)
         hasil = self._cr.fetchall()
@@ -151,10 +153,12 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
         # date_format = xlwt.XFStyle()
         # date_format.num_format_str = 'dd/mm/yyyy'
 
+        worksheet.write_merge(1, 1, 0, 4, "LAPORAN PENGELUARAN BARANG PER DOKUMEN " + export + " (Kuala Tanjung)",
+                              xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
         worksheet.write_merge(2, 2, 0, 4, "" + str(company).upper(
         ), xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
-        worksheet.write_merge(3, 3, 0, 4, "LAPORAN PEMASUKAN BARANG PER DOKUMEN " + str(
-            export) + " (Belawan)", xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
+        worksheet.write_merge(3, 3, 0, 4, "LAPORAN PENGELUARAN BARANG PER DOKUMEN " + export,
+                              xls_format.font_style(position='left', bold=1, fontos='black', font_height=300))
         worksheet.write_merge(5, 5, 0, 1, "PERIODE : " + str(start_date_format) + " S.D " + str(
             end_date_format), xls_format.font_style(position='left', bold=1, fontos='black', font_height=200))
 
@@ -171,31 +175,25 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
         worksheet.write(8, 4, "Tanggal", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 7, 5, 6, "Bukti Penerimaan Barang", xls_format.font_style(
+        worksheet.write_merge(7, 7, 5, 6, "Bukti/Dokumen Pengeluaran", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
         worksheet.write(8, 5, "Nomor", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
         worksheet.write(8, 6, "Tanggal", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 7, 7, 8, "Invoice (IN)", xls_format.font_style(
+        worksheet.write_merge(7, 8, 7, 7, "Pembeli/Penerima", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 7, "Nomor", xls_format.font_style(
+        worksheet.write_merge(7, 8, 8, 8, "Kode Barang", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write(8, 8, "Tanggal", xls_format.font_style(
+        worksheet.write_merge(7, 8, 9, 9, "Nama Barang", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 9, 9, "Pemasok/Pengirim", xls_format.font_style(
+        worksheet.write_merge(7, 8, 10, 10, "Sat", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 10, 10, "Kode Barang", xls_format.font_style(
+        worksheet.write_merge(7, 8, 11, 11, "Jumlah", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 11, 11, "Nama Barang", xls_format.font_style(
+        worksheet.write_merge(7, 8, 12, 12, "Currency", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 12, 12, "Sat", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 13, 13, "Jumlah", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 14, 14, "Currency", xls_format.font_style(
-            position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
-        worksheet.write_merge(7, 8, 15, 15, "Nilai Barang", xls_format.font_style(
+        worksheet.write_merge(7, 8, 13, 13, "Nilai Barang", xls_format.font_style(
             position='center', bold=1, border=1, fontos='black', font_height=200, color='grey'))
 
         row += 2
@@ -215,40 +213,31 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
                 position='center', border=1, fontos='black', font_height=200, color='false'))
             worksheet.write(row, 6, str(val[4].strftime('%d/%m/%Y')), xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 7, val[14], xls_format.font_style(
+            worksheet.write(row, 7, val[5], xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 8, str(val[15].strftime('%d/%m/%Y')), xls_format.font_style(
+            worksheet.write(row, 8, val[6], xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 9, val[5], xls_format.font_style(
+            worksheet.write(row, 9, val[7], xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 10, val[6], xls_format.font_style(
+            worksheet.write(row, 10, val[8], xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 11, val[7], xls_format.font_style(
+            worksheet.write(row, 11, val[9], xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 12, val[8], xls_format.font_style(
+            worksheet.write(row, 12, val[12], xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 13, val[9], xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 14, val[12], xls_format.font_style(
-                position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 15, val[10], xls_format.font_style(
+            worksheet.write(row, 13, val[10], xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
             row += 1
             no += 1
 
         fp = BytesIO()
         workbook.save(fp)
-        # Odoo10
-        # fp.seek(0)
-        # data = fp.read()
-        # fp.close()
-        # res = base64.b64encode(data)
         res = base64.encodestring(fp.getvalue())
-        res_id = self.env['inventory.excel.penerimaan.belawan.export.summary'].create(
-            {'name': 'Laporan Pemasukan Barang (Belawan).xls', 'file': res})
+        res_id = self.env['inventory.excel.pengeluaran.ktanjung.export.summary'].create(
+            {'name': 'Laporan Pengeluaran Barang (Kuala Tanjung).xls', 'file': res})
 
         return {
             'type': 'ir.actions.act_url',
-            'url': '/web/binary/download_document?model=inventory.excel.penerimaan.belawan.export.summary&field=file&id=%s&filename=Laporan Pemasukan Barang(Belawan).xls' % (res_id.id),
+            'url': '/web/binary/download_document?model=inventory.excel.pengeluaran.ktanjung.export.summary&field=file&id=%s&filename=Laporan Pengeluaran Barang (Kuala Tanjung).xls' % (res_id.id),
             'target': 'new',
         }

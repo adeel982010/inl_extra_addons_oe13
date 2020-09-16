@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="aktivitas_importir_ktanjung_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.internal_layout">
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <table class="table table-condensed">
+                                <thead>
+                                    <t t-set="start_date" t-value="time.strftime('%d/%m/%Y',time.strptime(str(o.date_start),'%Y-%m-%d'))"/>
+                                    <t t-set="start_end" t-value="time.strftime('%d/%m/%Y',time.strptime(str(o.date_end),'%Y-%m-%d'))"/>
+                                    <center>
+                                        <h4><b><span t-field="user.company_id.name" /></b></h4>
+                                        <h4><b>Laporan Aktivitas Importir (Kuala Tanjung)</b></h4>
+                                        <br/>
+                                    </center>
+                                    <span><b>Periode : </b><t t-esc="start_date"/> - <t t-esc="start_end"/></span>
+                                    <tr>
+                                        <th class="text-center" style="vertical-align:middle" rowspan="2"><strong>NO</strong></th>
+                                        <th class="text-center" colspan="6"><strong>DOKUMEN PEMASUKAN</strong></th>
+                                        <th class="text-center" colspan="3"><strong>DOKUMEN PENGELUARAN</strong></th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center"><strong>Jenis</strong></th>
+                                        <th class="text-center"><strong>Nama Importir</strong></th>
+                                        <th class="text-center"><strong>Nomor</strong></th>
+                                        <th class="text-center"><strong>Tanggal</strong></th>
+                                        <th class="text-center"><strong>No. Bukti</strong></th>
+                                        <th class="text-center"><strong>Tgl. Bukti</strong></th>
+                                        <th class="text-center"><strong>Jenis</strong></th>
+                                        <th class="text-center"><strong>Nomor</strong></th>
+                                        <th class="text-center"><strong>Tanggal</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="number" t-value="0"/>
+                                    <tr t-foreach="o.get_result()" t-as="line">
+                                        <t t-set="number" t-value="number+1"/>
+                                        <td class="text-center">
+                                            <span t-esc="number"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['jenis_dokumen']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['pemasok_pengirim']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['nomor_pabean']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <t t-if="line['tanggal_pabean']">
+                                                <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tanggal_pabean']),'%Y-%m-%d'))"/>
+                                            </t>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['nomor_penerimaan_barang']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <t t-if="line['tanggal_penerimaan_barang']">
+                                                <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tanggal_penerimaan_barang']),'%Y-%m-%d %H:%M:%S'))"/>
+                                            </t>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['jenis_dok_out']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line['no_dok_out']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <t t-if="line['tgl_dok_out']">
+                                                <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tgl_dok_out']),'%Y-%m-%d'))"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <report
+            string="Report PDF Aktivitas Importir"
+            id="aktivitas_importir_ktanjung"
+            model="aktivitas.importir.ktanjung.wizard"
+            report_type="qweb-pdf"
+            name="kin_beacukai_report.aktivitas_importir_ktanjung_document"
+            file="kin_beacukai_report.aktivitas_importir_ktanjung_document"
+        />
+
+        <record id="paperformat_pdf_aktivitas_importir_ktanjung" model="report.paperformat">
+            <field name="name">Paperformat PDF Aktivitas Importir</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">30</field>
+            <field name="margin_bottom">7</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">25</field>
+            <field name="dpi">90</field>
+            <field name="report_ids" eval="[
+                (4, ref('kin_beacukai_report.aktivitas_importir_ktanjung')),
+            ]"/>
+        </record>
+    </data>
+</odoo>
