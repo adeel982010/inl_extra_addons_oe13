@@ -8,8 +8,8 @@ class BebanPenjualanReport(models.TransientModel):
     _name = 'beban.penjualan.report'
 
     name = fields.Char(string='Name', default="Beban Penjualan")
-    date_from = fields.Date(string='Date Start')
-    date_to = fields.Date(string='Date End')
+    date_from = fields.Date(string='Date Start', required=True, )
+    date_to = fields.Date(string='Date End', required=True, )
     account_move_lines = fields.Many2many(
         comodel_name='account.move.line',
         relation='beban_penjualan_report_account_move_line_rel',
