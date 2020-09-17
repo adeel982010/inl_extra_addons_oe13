@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="beban_administrasi_report_wizard" model="ir.ui.view">
+            <field name="name">beban.administrasi.report.wizard</field>
+            <field name="model">beban.administrasi.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="date_from" required="1"/>
+
+                            <!-- <field name="carrier_xlsx_document_name" invisible="1" />
+                            <field name="carrier_xlsx_document" widget="binary" filename="carrier_xlsx_document_name" /> -->
+                        </group>
+                        <group>
+                            <field name="date_to" required="1" />
+                        </group>
+                    </group>
+                    <footer>
+                        <button type="object" name="process_wizard" string="Preview" class="oe_highlight"/>
+                        <button type="object" name="generate_pdf" string="PDF" class="oe_highlight"/>
+                        <button type="object" name="generate_excel" string="Excel" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="beban_administrasi_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">Beban Administrasi Report</field>
+            <field name="res_model">beban.administrasi.report</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="beban_administrasi_report_menu" name="Beban Administrasi" action="beban_administrasi_report_wizard_action" parent="account.account_reports_legal_statements_menu" sequence="100" groups="account.group_account_user"/>
+    </data>
+</odoo>

@@ -29,8 +29,10 @@
         'data/action_manager.xml',
         'views/accounting_custom_report_format_view.xml',
         'views/beban_penjualan_report_view.xml',
+        'views/beban_administrasi_report_view.xml',
         'reports/report_format.xml',
         'reports/beban_penjualan_report_template.xml',
+        'reports/beban_administrasi_report_template.xml',
         # 'views/templates.xml',
     ],
     # only loaded in demonstration mode

@@ -6,6 +6,10 @@ class AccountingCustomReportFormat(models.Model):
     _name = 'accounting.custom.report.format'
 
     name = fields.Char(string='Report Name', required=True, )
+    parent_report_id = fields.Many2one(
+        'accounting.custom.report.format', string='Parent Report')
+    child_report_ids = fields.One2many(
+        'accounting.custom.report.format', 'parent_report_id', string='Sub Reports')
     account_type = fields.Selection(
         [("account", "Account"), ("account.type", "Account Type")], string='Account Type', required=True, )
     account_account_ids = fields.Many2many(
@@ -22,5 +26,3 @@ class AccountingCustomReportFormat(models.Model):
         column2='account_id',
         string='Account Types'
     )
-
-    

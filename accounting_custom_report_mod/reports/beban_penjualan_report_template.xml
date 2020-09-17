@@ -62,7 +62,7 @@
                                 <br/>
                                 <span t-field="doc.date_from" />
                                 <span t-if="doc.date_from and doc.date_to"> - </span>
-                                <span t-field="doc.date_from" />
+                                <span t-field="doc.date_to" />
                             </div>
                             <div class="col-4"></div>
                             <div class="col-4"></div>
@@ -110,10 +110,10 @@
                                                 <b>Jumlah</b>
                                             </td>
                                             <td class="text-right">
-                                                <span t-esc="sum(doc.account_move_lines.mapped('balance'))" t-options='{"widget": "float", "precision": 2}'/>
+                                                <b t-esc="sum(doc.account_move_lines.mapped('balance'))" t-options='{"widget": "float", "precision": 2}'/>
                                             </td>
                                             <td class="text-right">
-                                                <span t-esc="sum(doc.to_this_month_move_lines.mapped('balance'))" t-options='{"widget": "float", "precision": 2}'/>
+                                                <b t-esc="sum(doc.to_this_month_move_lines.mapped('balance'))" t-options='{"widget": "float", "precision": 2}'/>
                                             </td>
                                         </tr>
 

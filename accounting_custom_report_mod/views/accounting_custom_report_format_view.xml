@@ -4,13 +4,14 @@
             <field name="name">accounting.custom.report.format.form</field>
             <field name="model">accounting.custom.report.format</field>
             <field name="arch" type="xml">
-                <form string="">
+                <form string="" create="false" delete="false" >
                     <header>
                     </header>
                     <sheet>
                         <group>
                             <group>
-                                <field name="name"/>
+                                <field name="name" readonly="1" />
+                                <field name="parent_report_id" readonly="1" />
                             </group>
                             <group>
                                 <field name="account_type"/>

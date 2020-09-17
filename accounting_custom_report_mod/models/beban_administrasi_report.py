@@ -15,22 +15,22 @@ except ImportError:
     import xlsxwriter
 
 
-class BebanPenjualanReport(models.TransientModel):
-    _name = 'beban.penjualan.report'
+class BebanAdministrasiReport(models.TransientModel):
+    _name = 'beban.administrasi.report'
 
-    name = fields.Char(string='Name', default="Beban Penjualan")
+    name = fields.Char(string='Name', default="Beban Administrasi")
     date_from = fields.Date(string='Date Start', required=True, )
     date_to = fields.Date(string='Date End', required=True, )
     account_move_lines = fields.Many2many(
         comodel_name='account.move.line',
-        relation='beban_penjualan_report_account_move_line_rel',
+        relation='beban_administrasi_report_account_move_line_rel',
         column1='wizard_id',
         column2='produk_id',
         string='Account Move Lines'
     )
     to_this_month_move_lines = fields.Many2many(
         comodel_name='account.move.line',
-        relation='beban_penjualan_report_account_move_line_to_this_month_rel',
+        relation='beban_administrasi_report_account_move_line_to_this_month_rel',
         column1='wizard_id',
         column2='produk_id',
         string='To this month account move lines'
@@ -38,20 +38,42 @@ class BebanPenjualanReport(models.TransientModel):
     # carrier_xlsx_document = fields.Binary(string='Excel File')
     # carrier_xlsx_document_name = fields.Char(string='Doc Name', default='0')
 
-    def get_accounts(self):
-        format_beban_penjualan_report = self.env.ref(
-            'accounting_custom_report_mod.accounting_custom_beban_penjualan_report')
+    def get_accounts(self, report_id):
+        report_format_obj = self.env.ref(report_id)
 
-        if format_beban_penjualan_report.account_type == 'account':
-            account_ids = format_beban_penjualan_report.account_account_ids
+        if report_format_obj.account_type == 'account':
+            account_ids = report_format_obj.account_account_ids
         else:
             account_ids = self.env['account.account'].search(
-                [('user_type_id', 'in', format_beban_penjualan_report.account_type_ids.ids)]) .account_account_ids
+                [('user_type_id', 'in', report_format_obj.account_type_ids.ids)]) .account_account_ids
 
         return account_ids
 
+    def get_current_period_move_lines(self, accounts):
+        return self.env['account.move.line'].search([
+            '&', '&', '&',
+            ('parent_state', '=', 'posted'),
+            ('date', '>=', self.date_from),
+            ('date', '<=', self.date_to),
+            ('account_id', 'in', accounts.ids)
+        ])
+
+    def get_this_year_move_lines(self, accounts):
+        last_year_end_date = datetime(datetime.today(
+        ).year-1, int(self.env.user.company_id.fiscalyear_last_month), int(self.env.user.company_id.fiscalyear_last_day))
+
+        # fiscalyear_end = datetime.strptime(fiscalyear_end_str, '%m/%d/%y')
+        return self.env['account.move.line'].search([
+            '&', '&', '&',
+            ('parent_state', '=', 'posted'),
+            ('date', '>', last_year_end_date),
+            ('date', '<=', self.date_to),
+            ('account_id', 'in', accounts.ids)
+        ])
+
     def generate_report_data(self):
-        account_ids = self.get_accounts()
+        account_ids = self.get_accounts(
+            'accounting_custom_report_mod.accounting_custom_beban_administrasi_report')
 
         self.account_move_lines = self.env['account.move.line'].search([
             '&', '&', '&',
@@ -68,9 +90,6 @@ class BebanPenjualanReport(models.TransientModel):
         last_year_end_date = datetime(datetime.today(
         ).year-1, int(self.env.user.company_id.fiscalyear_last_month), int(self.env.user.company_id.fiscalyear_last_day))
 
-        print('Fiscal Year End Date')
-        print(last_year_end_date)
-
         # fiscalyear_end = datetime.strptime(fiscalyear_end_str, '%m/%d/%y')
 
         self.to_this_month_move_lines = self.env['account.move.line'].search([
@@ -86,7 +105,7 @@ class BebanPenjualanReport(models.TransientModel):
         self.generate_report_data()
 
         action = self.env.ref(
-            'accounting_custom_report_mod.beban_penjualan_report_action').read()[0]
+            'accounting_custom_report_mod.beban_administrasi_report_action').read()[0]
 
         return action
 
@@ -96,11 +115,11 @@ class BebanPenjualanReport(models.TransientModel):
         action = {
             'type': 'ir.actions.report',
             'report_type': 'qweb-pdf',
-            'string': _(' Beban Penjualan'),
-            'name': 'beban_penjualan_report_action',
-            'report_name': 'accounting_custom_report_mod.beban_penjualan_report_template',
-            'file': 'accounting_custom_report_mod.beban_penjualan_report_template',
-            'res_model': 'beban.penjualan.report',
+            'string': _(' Beban Administrasi'),
+            'name': 'beban_administrasi_report_action',
+            'report_name': 'accounting_custom_report_mod.beban_administrasi_report_template',
+            'file': 'accounting_custom_report_mod.beban_administrasi_report_template',
+            'res_model': 'beban.administrasi.report',
             'paperformat_id': self.env.ref('accounting_custom_report_mod.accounting_custom_report_portrait_format').id,
             'res_id': self.id
 
@@ -109,7 +128,6 @@ class BebanPenjualanReport(models.TransientModel):
         return action
 
     def generate_excel(self):
-        print('**** Wizard ID : ' + str(self.id))
         self.generate_report_data()
 
         data = {
@@ -120,22 +138,16 @@ class BebanPenjualanReport(models.TransientModel):
 
         return {
             'type': 'ir_actions_xlsx_download',
-            'data': {'model': 'beban.penjualan.report',
+            'data': {'model': 'beban.administrasi.report',
                      'options': json.dumps(data, default=date_utils.json_default),
                      'output_format': 'xlsx',
-                     'report_name': 'Beban_Penjualan_Report_' + str(self.date_from) + '_' + str(self.date_to),
+                     'report_name': 'beban_administrasi_Report_' + str(self.date_from) + '_' + str(self.date_to),
                      }
         }
 
     def get_xlsx_report(self, data, response):
-        report_obj = self.env['beban.penjualan.report'].search(
+        report_obj = self.env['beban.administrasi.report'].search(
             [('id', '=', data['res_id'])], limit=1)
-
-        print('Account move lines')
-        pprint(report_obj.account_move_lines)
-
-        print('to this month Account move lines')
-        pprint(report_obj.to_this_month_move_lines)
 
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
@@ -166,7 +178,7 @@ class BebanPenjualanReport(models.TransientModel):
         # txt = workbook.add_format({'font_size': '10px'})
         # sheet.merge_range('B2:I3', 'EXCEL REPORT', head)
         sheet.merge_range('B2:E2', self.env.user.company_id.name, sub_head)
-        sheet.merge_range('B3:E3', 'Beban Penjualan', head)
+        sheet.merge_range('B3:E3', 'Beban Administrasi', head)
         sheet.merge_range(
             'B4:E4', data['date_from'] + ' - ' + data['date_to'], sub_head)
         sheet.write('B6', 'Ref', table_head)
@@ -175,7 +187,9 @@ class BebanPenjualanReport(models.TransientModel):
         sheet.write('E6', 'S/d. bulan ini', table_head)
 
         # table content
-        accounts = self.get_accounts()
+        # BEBAN ADMINISTRASI
+        accounts = self.get_accounts(
+            'accounting_custom_report_mod.accounting_custom_beban_administrasi_report')
         for acc in accounts:
             sheet.write(curr_row, curr_col, acc.code, number_row_format)
             sheet.write(curr_row, curr_col+1, acc.name, number_row_format)
@@ -216,11 +230,63 @@ class BebanPenjualanReport(models.TransientModel):
 
         # Total
         sheet.merge_range(curr_row, 1, curr_row,
-                          curr_col+1, 'Jumlah', table_head)
+                          curr_col+1, 'Jumlah Beban Administrasi', table_head)
         sheet.write(curr_row, curr_col+2,
                     sum(report_obj.account_move_lines.mapped('balance')), total_number_row_format)
         sheet.write(curr_row, curr_col+3,
                     sum(report_obj.to_this_month_move_lines.mapped('balance')), total_number_row_format)
+
+        curr_row = curr_row + 1
+
+        # BEBAN PENYUSUTAAN
+        penyusutan_accounts = self.get_accounts(
+            'accounting_custom_report_mod.accounting_custom_beban_penyusutan_report')
+        if penyusutan_accounts:
+            for acc in penyusutan_accounts:
+                sheet.write(curr_row, curr_col, acc.code, number_row_format)
+                sheet.write(curr_row, curr_col+1, acc.name, number_row_format)
+
+                current_period_move_lines = report_obj.get_current_period_move_lines(penyusutan_accounts).filtered(
+                    lambda x: x.account_id.id == acc.id)
+                this_year_move_lines = report_obj.get_this_year_move_lines(penyusutan_accounts).filtered(
+                    lambda x: x.account_id.id == acc.id)
+
+                ml_balance = sum(current_period_move_lines.mapped('balance'))
+                if ml_balance == 0:
+                    ml_balance = ''
+                sheet.write(curr_row, curr_col+2, ml_balance,
+                            number_row_format)
+
+                tth_ml = sum(this_year_move_lines.mapped('balance'))
+                if tth_ml == 0:
+                    tth_ml = ''
+                sheet.write(curr_row, curr_col+3, tth_ml, number_row_format)
+
+                curr_row = curr_row + 1
+
+                # getting column width
+                if len(str(acc.code)) > ref_col_width:
+                    ref_col_width = len(str(acc.code)) + 5
+                if len(str(acc.name)) > desc_col_width:
+                    desc_col_width = len(str(acc.name)) + 5
+
+                if ml_balance != '':
+                    ml_balance_frmt = "{:,.2f}".format(float(ml_balance))
+                    if len(ml_balance_frmt) > this_month_col_width:
+                        this_month_col_width = len(ml_balance_frmt) + 5
+
+                if tth_ml != '':
+                    tth_ml_frmt = "{:,.2f}".format(float(tth_ml))
+                    if len(tth_ml_frmt) > to_this_month_col_width:
+                        to_this_month_col_width = len(tth_ml_frmt) + 5
+
+            # Total Beban Bersih
+            sheet.merge_range(curr_row, 1, curr_row,
+                              curr_col+1, 'Jumlah Beban Administrasi Bersih', table_head)
+            sheet.write(curr_row, curr_col+2,
+                        sum(report_obj.account_move_lines.mapped('balance')) + sum(report_obj.get_current_period_move_lines(penyusutan_accounts).mapped('balance')), total_number_row_format)
+            sheet.write(curr_row, curr_col+3,
+                        sum(report_obj.to_this_month_move_lines.mapped('balance')) + + sum(report_obj.get_this_year_move_lines(penyusutan_accounts).mapped('balance')), total_number_row_format)
 
         # set column width
         sheet.set_column(0, 0, 3)

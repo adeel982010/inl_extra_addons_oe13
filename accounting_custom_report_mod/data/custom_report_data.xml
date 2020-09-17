@@ -5,6 +5,17 @@
             <field name="name">Beban Penjualan</field>
             <field name="account_type">account</field>
         </record>
+        
+        <record id="accounting_custom_beban_administrasi_report" model="accounting.custom.report.format">
+            <field name="name">Beban Administrasi</field>
+            <field name="account_type">account</field>
+        </record>
+        
+        <record id="accounting_custom_beban_penyusutan_report" model="accounting.custom.report.format">
+            <field name="name">Beban Penyusutan</field>
+            <field name="account_type">account</field>
+            <field name="parent_report_id" ref="accounting_custom_beban_administrasi_report" ></field>
+        </record>
 
     </data>
 </odoo>
