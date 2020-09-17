@@ -42,13 +42,15 @@ class BebanPenjualanReport(models.TransientModel):
         format_beban_penjualan_report = self.env.ref(
             'accounting_custom_report_mod.accounting_custom_beban_penjualan_report')
 
-        if format_beban_penjualan_report.account_type == 'account':
-            account_ids = format_beban_penjualan_report.account_account_ids
-        else:
-            account_ids = self.env['account.account'].search(
-                [('user_type_id', 'in', format_beban_penjualan_report.account_type_ids.ids)]) .account_account_ids
+        # if format_beban_penjualan_report.account_type == 'account':
+        #     account_ids = format_beban_penjualan_report.account_account_ids
+        # else:
+        #     account_ids = self.env['account.account'].search(
+        #         [('user_type_id', 'in', format_beban_penjualan_report.account_type_ids.ids)]) .account_account_ids
 
-        return account_ids
+        return format_beban_penjualan_report.get_accounts()
+
+        # return account_ids
 
     def generate_report_data(self):
         account_ids = self.get_accounts()

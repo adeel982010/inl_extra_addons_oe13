@@ -19,11 +19,17 @@
                         </group>
 
                         <notebook>
-                            <page string="Accounts" attrs="{'invisible':[('account_type', '=', 'account.type')]}">
+                            <page string="Accounts" attrs="{'invisible':[('account_type', '!=', 'account')]}">
                                 <field name="account_account_ids"/>
                             </page>
-                            <page string="Account Types" attrs="{'invisible':[('account_type', '=', 'account')]}">
+                            <page string="Account Types" attrs="{'invisible':[('account_type', '!=', 'account.type')]}">
                                 <field name="account_type_ids"/>
+                            </page>
+                            <page string="Account Groups" attrs="{'invisible':[('account_type', '!=', 'group')]}">
+                                <field name="account_by_group_ids"/>
+                            </page>
+                            <page string="Account Tags" attrs="{'invisible':[('account_type', '!=', 'tag')]}">
+                                <field name="account_by_tag_ids"/>
                             </page>
                         </notebook>
                     </sheet>

@@ -41,13 +41,14 @@ class BebanAdministrasiReport(models.TransientModel):
     def get_accounts(self, report_id):
         report_format_obj = self.env.ref(report_id)
 
-        if report_format_obj.account_type == 'account':
-            account_ids = report_format_obj.account_account_ids
-        else:
-            account_ids = self.env['account.account'].search(
-                [('user_type_id', 'in', report_format_obj.account_type_ids.ids)]) .account_account_ids
+        # if report_format_obj.account_type == 'account':
+        #     account_ids = report_format_obj.account_account_ids
+        # else:
+        #     account_ids = self.env['account.account'].search(
+        #         [('user_type_id', 'in', report_format_obj.account_type_ids.ids)]) .account_account_ids
 
-        return account_ids
+        # return account_ids
+        return report_format_obj.get_accounts()
 
     def get_current_period_move_lines(self, accounts):
         return self.env['account.move.line'].search([
