@@ -155,10 +155,10 @@ class BebanPenjualanReport(models.TransientModel):
         number_row_format = workbook.add_format(
             {'num_format': '#,##0.00', 'top': 1, 'bottom': 1, 'left': 1, 'right': 1})
 
-        ref_col_width = 0  # 10
-        desc_col_width = 0  # 80
-        this_month_col_width = 0  # 25
-        to_this_month_col_width = 0  # 25
+        ref_col_width = 10  # 10
+        desc_col_width = 10  # 80
+        this_month_col_width = 10  # 25
+        to_this_month_col_width = 10  # 25
 
         # txt = workbook.add_format({'font_size': '10px'})
         # sheet.merge_range('B2:I3', 'EXCEL REPORT', head)
