@@ -26,6 +26,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/custom_report_data.xml',
+        'data/action_manager.xml',
         'views/accounting_custom_report_format_view.xml',
         'views/beban_penjualan_report_view.xml',
         'reports/report_format.xml',
