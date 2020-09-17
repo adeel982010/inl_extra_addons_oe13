@@ -187,23 +187,29 @@ class BebanPenjualanReport(models.TransientModel):
                 ml_balance = ''
             sheet.write(curr_row, curr_col+2, ml_balance,
                         number_row_format)
-
-            tth_ml = sum(to_this_month_ml.mapped('balance'))
+                        
+            tth_ml=sum(to_this_month_ml.mapped('balance'))
             if tth_ml == 0:
-                tth_ml = ''
+                tth_ml=''
             sheet.write(curr_row, curr_col+3, tth_ml, number_row_format)
 
-            curr_row = curr_row + 1
+            curr_row=curr_row + 1
 
             # getting column width
             if len(str(acc.code)) > ref_col_width:
-                ref_col_width = len(str(acc.code)) + 5
+                ref_col_width=len(str(acc.code)) + 5
             if len(str(acc.name)) > desc_col_width:
-                desc_col_width = len(str(acc.name)) + 5
-            if len(str(ml_balance)) > this_month_col_width:
-                this_month_col_width = len(str(ml_balance)) + 5
-            if len(str(tth_ml)) > to_this_month_col_width:
-                to_this_month_col_width = len(str(tth_ml)) + 5
+                desc_col_width=len(str(acc.name)) + 5
+
+            if ml_balance != '':
+                ml_balance_frmt = "{:,.2f}".format(float(ml_balance))
+                if len(ml_balance_frmt) > this_month_col_width:
+                    this_month_col_width=len(ml_balance_frmt) + 5
+
+            if tth_ml != '':
+                tth_ml_frmt = "{:,.2f}".format(float(tth_ml))
+                if len(tth_ml_frmt) > to_this_month_col_width:
+                    to_this_month_col_width=len(tth_ml_frmt) + 5
 
         # Total
         sheet.merge_range(curr_row, 1, curr_row,
