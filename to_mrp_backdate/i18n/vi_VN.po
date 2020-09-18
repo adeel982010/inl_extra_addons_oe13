@@ -1,0 +1,197 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* to_mrp_backdate
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-14 09:45+0000\n"
+"PO-Revision-Date: 2020-05-14 09:45+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workcenter_productivity__backdate
+msgid "Backdate"
+msgstr "Quá khứ"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard__create_uid
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard__create_uid
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__create_uid
+msgid "Created by"
+msgstr "Được tạo bởi"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard__create_date
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard__create_date
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__create_date
+msgid "Created on"
+msgstr "Được tạo ra"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__date
+msgid "Date"
+msgstr "Ngày"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard__date
+msgid "Date Done"
+msgstr "Ngày hoàn thành"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard__display_name
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard__display_name
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__display_name
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard__id
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard__id
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__id
+msgid "ID"
+msgstr "ID"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,help:to_mrp_backdate.field_mrp_workcenter_productivity__backdate
+msgid ""
+"If filled, this date and time will be used instead of the current date and "
+"time"
+msgstr "Nếu được điền, Ngày và giờ sẽ được sử dụng thay cho ngày giờ hiện tại"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard__date
+msgid "Inventory Date"
+msgstr "Ngày kiểm kho"
+
+#. module: to_mrp_backdate
+#: code:addons/to_mrp_backdate/models/mrp_workcenter.py:0
+#, python-format
+msgid "It has been unblocked already. "
+msgstr "Nó đã được bỏ phong tỏa"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard____last_update
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard____last_update
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard____last_update
+msgid "Last Modified on"
+msgstr "Sửa đổi lần cuối vào"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard__write_uid
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard__write_uid
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Cập nhật lần cuối bởi"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard__write_date
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard__write_date
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__write_date
+msgid "Last Updated on"
+msgstr "Cập nhật lần cuối vào"
+
+#. module: to_mrp_backdate
+#: model:ir.model,name:to_mrp_backdate.model_mrp_inventory_backdate_wizard
+msgid "MRP Inventory Backdate Wizard"
+msgstr "Đồ thuật Lùi ngày vào sổ kho"
+
+#. module: to_mrp_backdate
+#: model:ir.model,name:to_mrp_backdate.model_mrp_markdone_backdate_wizard
+msgid "MRP Mark Done Backdate Wizard"
+msgstr "Đồ thuật Lùi ngày hoàn thành Lệnh SX"
+
+#. module: to_mrp_backdate
+#: model:ir.model,name:to_mrp_backdate.model_mrp_workorder_backdate_wizard
+msgid "MRP Workorder Backdate Wizard"
+msgstr "Đồ thuật Lùi ngày Hoạt động Sản xuất"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_inventory_backdate_wizard__mrp_order_id
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_markdone_backdate_wizard__mrp_order_id
+msgid "Manufacturing Order"
+msgstr "Đơn sản xuất"
+
+#. module: to_mrp_backdate
+#: model:ir.model,name:to_mrp_backdate.model_mrp_production
+msgid "Production Order"
+msgstr "Lệnh Sản xuất"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__source_action
+msgid "Source Action"
+msgstr ""
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,help:to_mrp_backdate.field_mrp_inventory_backdate_wizard__date
+#: model:ir.model.fields,help:to_mrp_backdate.field_mrp_markdone_backdate_wizard__date
+#: model:ir.model.fields,help:to_mrp_backdate.field_mrp_workorder_backdate_wizard__date
+msgid "The date and time at which the operation was actually done."
+msgstr "Ngày và giờ thực hiện thao tác"
+
+#. module: to_mrp_backdate
+#: model:ir.model.fields,help:to_mrp_backdate.field_mrp_workorder_backdate_wizard__source_action
+msgid "The source method of mrp.workorder that called this wizard."
+msgstr "Phương thức nguồn của mr.workorder không thể gọi thuật sĩ này"
+
+#. module: to_mrp_backdate
+#: code:addons/to_mrp_backdate/models/mrp_workorder.py:0
+#, python-format
+msgid "Time Tracking: "
+msgstr "Kiểm soát thời gian: "
+
+#. module: to_mrp_backdate
+#: model:ir.model,name:to_mrp_backdate.model_mrp_workcenter
+msgid "Work Center"
+msgstr "Năng lực Sản xuất"
+
+#. module: to_mrp_backdate
+#: model:ir.model,name:to_mrp_backdate.model_mrp_workorder
+#: model:ir.model.fields,field_description:to_mrp_backdate.field_mrp_workorder_backdate_wizard__mrp_wo_id
+msgid "Work Order"
+msgstr "Hoạt động Sản xuất"
+
+#. module: to_mrp_backdate
+#: model:ir.model,name:to_mrp_backdate.model_mrp_workcenter_productivity
+msgid "Workcenter Productivity Log"
+msgstr "Nhật ký Năng suất Năng lực SX"
+
+#. module: to_mrp_backdate
+#: code:addons/to_mrp_backdate/models/mrp_workorder.py:0
+#, python-format
+msgid ""
+"You need to define at least one productivity loss in the category "
+"'Performance'. Create one from the Manufacturing app, menu: Configuration / "
+"Productivity Losses."
+msgstr ""
+"Bạn cần xác định ít nhất một tổn thất năng suất trong Nhóm 'Hiệu suất'. Tạo "
+"một ứng dụng từ menu Ứng dụng, menu: Cấu hình/Mất năng suất."
+
+#. module: to_mrp_backdate
+#: code:addons/to_mrp_backdate/models/mrp_workorder.py:0
+#, python-format
+msgid ""
+"You need to define at least one productivity loss in the category "
+"'Productivity'. Create one from the Manufacturing app, menu: Configuration /"
+" Productivity Losses."
+msgstr ""
+"Bạn cần xác định ít nhất một tổn thất năng suất trong Nhóm 'Năng suất'. Tạo "
+"một ứng dụng từ menu Ứng dụng, menu: Cấu hình/Mất năng suất."
+
+#. module: to_mrp_backdate
+#: code:addons/to_mrp_backdate/models/mrp_workorder.py:0
+#, python-format
+msgid ""
+"You need to define at least one unactive productivity loss in the category "
+"'Performance'. Create one from the Manufacturing app, menu: Configuration / "
+"Productivity Losses."
+msgstr ""
+"Bạn cần phải xác định ít nhất một mất năng suất không hoạt động trong danh "
+"mục 'Hiệu suất'. Tạo một ứng dụng từ menu Ứng dụng, menu: Cấu hình/Mất năng "
+"suất."
