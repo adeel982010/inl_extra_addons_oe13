@@ -12,6 +12,8 @@ class AccountInvoice(models.Model):
         for invoice in self:
             if invoice.company_id.cancel_paid_invoice:
                 invoice.cancel_paid_invoice = True
+            else:
+                invoice.cancel_paid_invoice = False
 
     
     def button_cancel(self):

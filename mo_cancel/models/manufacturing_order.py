@@ -82,13 +82,13 @@ class ManufacturingOrder(models.Model):
                         if all(state in ('done', 'cancel') for state in siblings_states):
                             move.move_dest_ids.write({'procure_method': 'make_to_stock'})
                         move.move_dest_ids.write({'move_orig_ids': [(3, move.id, 0)]})
-                    move.write({'state': 'cancel', 'move_orig_ids': [(5, 0, 0)]})
+                    move.write({'state': 'cancel'})
                     account_moves = account_move_obj.search([('stock_move_id', '=', move.id)])
                     if account_moves:
                         for account_move in account_moves:
                             account_move.quantity_done = 0.0
                             account_move.button_cancel()
-                            account_move.unlink()
+                            account_move.with_context(force_delete=True).unlink()
 
             if order.company_id.cancel_work_order_for_mo:
                 order.workorder_ids.action_cancel()
