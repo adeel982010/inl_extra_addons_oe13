@@ -19,7 +19,6 @@ class SaleOrder(models.Model):
                         break
             order.cancel_paid_invoice = Flag
                 
-
     def cancel_invoice(self):
         invoices=[]
         invoice_obj = self.env['account.move']
@@ -54,7 +53,6 @@ class SaleOrder(models.Model):
             },
         }
 
-
     @api.model
     def check_cancel_done_picking(self):
         for order in self:
@@ -65,9 +63,7 @@ class SaleOrder(models.Model):
                         Flag = True
                         break
             order.cancel_done_picking = Flag
-                
 
-    
     def cancel_picking(self):
         if len(self.picking_ids) == 1 :
             self.picking_ids.with_context({'Flag':True}).action_cancel()
@@ -107,9 +103,8 @@ class SaleOrder(models.Model):
     def action_cancel(self):
         quant_obj= self.env['stock.quant']
         moves = self.env['account.move']
-        account_move_obj=self.env['account.move']
+        account_move_obj= self.env['account.move']
         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-
         for order in self:
             if order.picking_ids and order.warehouse_id.cancel_delivery_order :
                 for picking in order.picking_ids:
@@ -145,6 +140,8 @@ class SaleOrder(models.Model):
                                     move.move_dest_ids.write({'procure_method': 'make_to_stock'})
                                 move.move_dest_ids.write({'move_orig_ids': [(3, move.id, 0)]})
                             account_moves = account_move_obj.search([('stock_move_id', '=', move.id)])
+                            valuation = move.stock_valuation_layer_ids
+                            valuation and valuation.sudo().unlink()
                             if account_moves:
                                 for account_move in account_moves:
                                     account_move.button_cancel()
@@ -162,8 +159,6 @@ class SaleOrder(models.Model):
                         if invoice and not invoice.journal_id.restrict_mode_hash_table:
                             invoice.write({'restrict_mode_hash_table':False})
                         invoice.button_cancel()
-
-                        
 
         res = super(SaleOrder,self).action_cancel()
         return res

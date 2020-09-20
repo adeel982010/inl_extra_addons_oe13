@@ -1,5 +1,6 @@
 from odoo import api, fields, models,exceptions
-from odoo.tools.float_utils import float_round, float_compare, float_is_zero
+
+
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
@@ -11,20 +12,22 @@ class StockPicking(models.Model):
         for picking in self:
             if picking.company_id.cancel_done_picking:
                 picking.cancel_done_picking = True
+            else:
+                picking.cancel_done_picking = False
 
     def action_cancel(self):
         quant_obj= self.env['stock.quant']
         moves = self.env['account.move']
         return_picking_obj = self.env['stock.return.picking']
-        account_move_obj=self.env['account.move']
+        account_move_obj= self.env['account.move']
         for picking in self:
             if self.env.context.get('Flag',False) and picking.state =='done':
-                account_moves=picking.move_lines
-                return_pickings = return_picking_obj.search([('picking_id','=',picking.id)])
-                if return_pickings and return_pickings:
-                    pass
+                account_moves = picking.move_lines
+                # return_pickings = return_picking_obj.search([('picking_id','=',picking.id)])
+                # if return_pickings and return_pickings:
+                #     pass
                 for move in account_moves:
-                    if move.state=='cancel':
+                    if move.state == 'cancel':
                         continue
                     landed_cost_rec =[]
                     try:
@@ -58,6 +61,8 @@ class StockPicking(models.Model):
                             move.move_dest_ids.write({'procure_method': 'make_to_stock'})
                         move.move_dest_ids.write({'move_orig_ids': [(3, move.id, 0)]})
                     account_moves = account_move_obj.search([('stock_move_id', '=', move.id)])
+                    valuation = move.stock_valuation_layer_ids
+                    valuation and valuation.sudo().unlink()
                     if account_moves:
                         for account_move in account_moves:
                             account_move.button_cancel()
