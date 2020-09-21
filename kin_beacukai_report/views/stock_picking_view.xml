@@ -19,9 +19,6 @@
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="no_invoice" />
                     <field name="tanggal_invoice" />
-                    <field name="no_polisi" />
-                    <field name="driver_name" />
-                    <field name="no_karcis_timbangan" />
                 </xpath>
                 <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_uom']" position="after">
                     <field name="product_price"/>
@@ -36,6 +33,13 @@
             <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='qty_done']" position="before">
+                    <field name="no_polisi" />
+                    <field name="driver_name" />
+                    <field name="no_karcis_timbangan" />
+                    <field name="no_surat_jalan" />
+                    <field name="bruto_from"/>
+                    <field name="tarra_from"/>
+                    <field name="netto_from"/>
                     <field name="bruto"/>
                     <field name="tarra"/>
                 </xpath>

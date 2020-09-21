@@ -49,7 +49,28 @@ class StockMove(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
+    no_polisi = fields.Char(string="No Polisi")
+    driver_name = fields.Char(string="Nama Supir")
+    no_karcis_timbangan = fields.Char(string="No Karcis Timbangan")
+    no_surat_jalan = fields.Char(string="No Surat Jalan")
+    bruto_from = fields.Float(
+        string="Bruto (From)", digits=dp.get_precision('Stock Weight'), readonly=False, store=True)
+    tarra_from = fields.Float(
+        string="Tarra (From)", digits=dp.get_precision('Stock Weight'), readonly=False, store=True)
+    netto_from = fields.Float(
+        string="Netto (From)", digits=dp.get_precision('Stock Weight'),
+        compute="_compute_netto_from", inverse='_set_netto_from', readonly=False, store=True)
     bruto = fields.Float(
         string="Bruto", digits=dp.get_precision('Stock Weight'), readonly=False, store=True)
     tarra = fields.Float(
         string="Tarra", digits=dp.get_precision('Stock Weight'), readonly=False, store=True)
+
+    @api.depends('bruto_from', 'tarra_from')
+    def _compute_netto_from(self):
+        for row in self:
+            row.netto_from = row.bruto_from - row.tarra_from
+
+    def _set_netto_from(self):
+        for row in self:
+            if not row.netto_from:
+                continue
