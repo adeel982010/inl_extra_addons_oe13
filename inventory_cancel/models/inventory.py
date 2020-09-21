@@ -60,11 +60,12 @@ class StockInventory(models.Model):
                             move.move_dest_ids.write({'procure_method': 'make_to_stock'})
                         move.move_dest_ids.write({'move_orig_ids': [(3, move.id, 0)]})
                     move.write({'state': 'cancel', 'move_orig_ids': [(5, 0, 0)]})
-
+                    valuation = move.stock_valuation_layer_ids
+                    valuation and valuation.sudo().unlink()
                     account_moves = account_move_obj.search([('stock_move_id', '=', move.id)])
                     if account_moves:
                         for account_move in account_moves:
                             account_move.button_cancel()
-                            account_move.unlink()
+                            account_move.with_context(force_delete=True).unlink()
                 inv_adjustment.write({'state': 'cancel'})
         return True
