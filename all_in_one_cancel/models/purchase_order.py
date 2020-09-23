@@ -146,7 +146,8 @@ class PurchaseOrder(models.Model):
                             if account_moves:
                                 for account_move in account_moves:
                                     account_move.button_cancel()
-                                    account_move.unlink()
+                                    account_move.mapped('line_ids').remove_move_reconcile()
+                                    account_move.with_context(force_delete=True).unlink()
 
             if order.company_id.cancel_invoice_for_po:
                 for invoice in order.invoice_ids:

@@ -21,11 +21,12 @@
     'category': 'Accounting',
     'version': '1',
 
-    'depends': ['purchase','sale'],
+    'depends': ['purchase','sale','account'],
 
     'data': [
         'views/purchase_views.xml',
         'views/sale_order_views.xml',
+        'views/account_view.xml',
     ],
     'application': True,
     'installable': True,

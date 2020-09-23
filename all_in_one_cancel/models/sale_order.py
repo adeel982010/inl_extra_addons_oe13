@@ -145,7 +145,8 @@ class SaleOrder(models.Model):
                             if account_moves:
                                 for account_move in account_moves:
                                     account_move.button_cancel()
-                                    account_move.unlink()
+                                    account_move.mapped('line_ids').remove_move_reconcile()
+                                    account_move.with_context(force_delete=True).unlink()
 
             if order.warehouse_id.cancel_invoice:
                 # order.invoice_ids.action_cancel()
