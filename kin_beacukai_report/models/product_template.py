@@ -8,10 +8,10 @@ _logger = logging.getLogger(__name__)
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    _sql_constraints = [
-        ('default_code_uniq', 'unique (default_code)',
-         'The Product Code of the product must be unique!')
-    ]
+    # _sql_constraints = [
+    #     ('default_code_uniq', 'unique (default_code)',
+    #      'The Product Code of the product must be unique!')
+    # ]
 
     default_code = fields.Char(
         'Product Code', compute='_compute_default_code',
