@@ -16,6 +16,11 @@ class stock_picking(models.Model):
     no_invoice = fields.Char(string="No Invoice")
     tanggal_invoice = fields.Date(
         'Tanggal Invoice', default=lambda *a: datetime.today().date())
+    # no_polisi = fields.Char(string="No Polisi")
+    # driver_name = fields.Char(string="Nama Supir")
+    # no_karcis_timbangan = fields.Char(string="No Karcis Timbangan")
+    # no_surat_jalan = fields.Char(string="No Surat Jalan")
+
     # ada di modul purchase_stock
     # purchase_id = fields.Many2one('purchase.order', "Purchase Order")
     # ada di modul sale_stock
