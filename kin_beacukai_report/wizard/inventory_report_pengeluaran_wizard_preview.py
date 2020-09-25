@@ -121,7 +121,7 @@ class InventoryPreviewPengeluaranReportWizard(models.TransientModel):
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
-                    sm.product_uom_qty, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol 
+                    SUM(sm.product_uom_qty) AS product_uom_qty, SUM(sm.subtotal_price) AS nilai_barang, spt.code AS status_type, rc.symbol 
                 FROM stock_move sm 
                 INNER JOIN stock_picking sp ON sm.picking_id=sp.id 
                 LEFT JOIN res_partner rp ON sp.partner_id=rp.id
@@ -137,6 +137,9 @@ class InventoryPreviewPengeluaranReportWizard(models.TransientModel):
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """                  
                 """ + where_export + """
+                GROUP BY sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
+                    sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
+                    spt.code AS status_type, rc.symbol, sp.no_aju
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC 
             """
         list_data = []

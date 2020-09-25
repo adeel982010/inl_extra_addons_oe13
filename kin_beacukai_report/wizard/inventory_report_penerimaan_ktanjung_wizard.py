@@ -127,7 +127,7 @@ class InventoryExportPenerimaanKtanjungReportWizard(models.TransientModel):
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
-                    sml.qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
+                    SUM(sml.qty_done) AS qty_done, SUM(sm.subtotal_price) AS nilai_barang, spt.code AS status_type, rc.symbol,
                     sp.no_aju, sp.no_invoice, sp.tanggal_invoice 
                 FROM stock_move_line sml
                 LEFT JOIN stock_move sm ON sml.move_id = sm.id
@@ -143,6 +143,10 @@ class InventoryExportPenerimaanKtanjungReportWizard(models.TransientModel):
                 """ + where_export + """
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """
+                GROUP BY sp.jenis_dokumen, sp.no_dokumen, sp.tanggal_dokumen, sp.name, 
+                    sp.date_done, rp.name, pp.default_code, pt.name, uu.name, 
+                    spt.code, rc.symbol,
+                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC
             """
         self._cr.execute(query)
