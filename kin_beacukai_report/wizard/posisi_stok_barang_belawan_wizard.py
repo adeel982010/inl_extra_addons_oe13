@@ -80,9 +80,9 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
-                    sml.qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
+                    coalesce(sml.qty_done,0) AS qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
                     sp.no_aju, sp.no_invoice, sp.tanggal_invoice,
-                    out.jenis_dok_out, out.no_dok_out, out.tgl_dok_out, out.qty_out,
+                    out.jenis_dok_out, out.no_dok_out, out.tgl_dok_out, coalesce(out.qty_out,0) AS qty_out,
                     po.name, po.date_order, sm.sequence
                 FROM stock_move_line sml
                 LEFT JOIN stock_move sm ON sml.move_id = sm.id
