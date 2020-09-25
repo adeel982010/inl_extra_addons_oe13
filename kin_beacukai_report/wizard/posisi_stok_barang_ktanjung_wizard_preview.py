@@ -54,9 +54,9 @@ class PosisiStokBarangKtanjungWizard(models.TransientModel):
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
-                    sml.qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
+                    coalesce(sml.qty_done,0) AS qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
                     sp.no_aju, sp.no_invoice, sp.tanggal_invoice,
-                    out.jenis_dok_out, out.no_dok_out, out.tgl_dok_out, out.qty_out,
+                    out.jenis_dok_out, out.no_dok_out, out.tgl_dok_out, coalesce(out.qty_out,0) AS qty_out,
                     po.name, po.date_order, sm.sequence
                 FROM stock_move_line sml
                 LEFT JOIN stock_move sm ON sml.move_id = sm.id
@@ -94,6 +94,10 @@ class PosisiStokBarangKtanjungWizard(models.TransientModel):
 
         no = 1
         for val in vals:
+            tgl_dok_out = ''
+            if (val[18]):
+                tgl_dok_out = str(val[18].strftime('%d/%m/%Y'))
+
             list_data.append({
                 'jenis_dokumen': val[0],
                 'nomor_pabean': val[1],
@@ -112,7 +116,7 @@ class PosisiStokBarangKtanjungWizard(models.TransientModel):
                 'tanggal_invoice': val[15],
                 'jenis_dok_out': val[16],
                 'no_dok_out': val[17],
-                'tgl_dok_out': val[18],
+                'tgl_dok_out': tgl_dok_out,
                 'qty_out': val[19],
                 'qty_saldo': val[9] - val[19],
                 'po_no': val[20],

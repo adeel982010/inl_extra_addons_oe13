@@ -171,6 +171,10 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
         row += 2
         no = 1
         for val in vals:
+            tgl_dok_out = ''
+            if (val[18]):
+                tgl_dok_out = str(val[18].strftime('%d/%m/%Y'))
+
             jenis_dokumen = val[0]
             nomor_pabean = val[1]
             tanggal_pabean = val[2]
@@ -188,7 +192,7 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
             tanggal_invoice = val[15]
             jenis_dok_out = val[16]
             no_dok_out = val[17]
-            tgl_dok_out = val[18]
+            tgl_dok_out = tgl_dok_out
             qty_out = val[19]
             qty_saldo = val[9] - val[19]
             po_no = val[20]
@@ -222,7 +226,7 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
                 position='center', border=1, fontos='black', font_height=200, color='false'))
             worksheet.write(row, 11, no_dok_out, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 12, str(tgl_dok_out.strftime('%d/%m/%Y')), xls_format.font_style(
+            worksheet.write(row, 12, tgl_dok_out, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
             worksheet.write(row, 13, satuan, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
