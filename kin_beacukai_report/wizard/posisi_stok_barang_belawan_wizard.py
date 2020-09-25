@@ -194,7 +194,7 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
             po_no = val[20]
             po_date = ''
             if val[21]:
-                po_date = str(val[21].strftime('%d/%m/%Y'))
+                po_date = str(datetime.datetime.fromtimestamp(val[21]).date().strftime('%d/%m/%Y'))
 
             seri = val[22]
 

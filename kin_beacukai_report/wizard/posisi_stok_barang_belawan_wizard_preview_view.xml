@@ -85,7 +85,9 @@
                                             <span t-esc="line['no_dok_out']"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tgl_dok_out']),'%Y-%m-%d'))"/>
+                                            <t t-if="line['tgl_dok_out']">
+                                                <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tgl_dok_out']),'%Y-%m-%d'))"/>
+                                            </t>
                                         </td>
                                         <td class="text-center">
                                             <span t-esc="line['satuan']"/>
