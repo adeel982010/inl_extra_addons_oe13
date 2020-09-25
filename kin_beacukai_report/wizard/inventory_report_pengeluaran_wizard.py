@@ -37,7 +37,7 @@ class InventoryExportPengeluaranReportWizard(models.TransientModel):
     product_ids = fields.Many2many('product.product', 'ms_stock_card_out_product_rel', 'stock_card_id',
                                    'product_id', 'Produk', copy=False, domain=[('type', '=', 'product')])
     export_report = fields.Selection([('BC 2.5', 'BC 2.5'), ('BC 2.6.1', 'BC 2.6.1'), (
-        'BC 2.7', 'BC 2.7'), ('BC 3.0', 'BC 3.0'), ('BC 4.1', 'BC 4.1')], "Report Type", default='BC 2.5')
+        'BC 2.7', 'BC 2.7'), ('BC 3.0', 'BC 3.0'), ('BC 4.1', 'BC 4.1')], "Report Type", default='')
 
     @api.onchange('date_start', 'date_end')
     def onchange_date(self):
@@ -110,18 +110,21 @@ class InventoryExportPengeluaranReportWizard(models.TransientModel):
         if ids_product:
             where_product = "pp.id in %s" % str(
                 tuple(ids_product)).replace(',)', ')')
-        if export == "BC 2.5":
+
+        where_export = "AND sp.jenis_dokumen NOT IN ('', 'Non BC')"
+        if export == "AND sp.jenis_dokumen = 'BC 2.5'":
             where_export = "BC 2.5"
-        elif export == "BC 2.6.1":
+        elif export == "AND sp.jenis_dokumen = 'BC 2.6.1'":
             where_export = "BC 2.6.1"
         elif export == "BC 2.7":
-            where_export = "BC 2.7"
+            where_export = "AND sp.jenis_dokumen = 'BC 2.7'"
         elif export == "BC 3.0":
-            where_export = "BC 3.0"
+            where_export = "AND sp.jenis_dokumen = 'BC 3.0'"
         elif export == "BC 3.3":
-            where_export = "BC 3.3"
+            where_export = "AND sp.jenis_dokumen = 'BC 3.3'"
         elif export == "BC 4.1":
-            where_export = "BC 4.1"
+            where_export = "AND sp.jenis_dokumen = 'BC 4.1'"
+
         query = """
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
@@ -141,7 +144,7 @@ class InventoryExportPengeluaranReportWizard(models.TransientModel):
                     OR (sm.location_id = '19' AND sm.location_dest_id != '19'))
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """                  
-                AND sp.jenis_dokumen = '""" + where_export + """'
+                """ + where_export + """
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC 
             """
         self._cr.execute(query)

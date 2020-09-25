@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_mutasi_auditlog_log,access_auditlog_log,auditlog.model_auditlog_log,kin_beacukai_report.group_bea_cukai,1,0,0,0
+access_stock_picking_document,access_picking_document,kin_beacukai_report.model_stock_picking_document,stock.group_stock_user,1,1,1,1

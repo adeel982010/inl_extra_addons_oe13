@@ -37,7 +37,7 @@ class InventoryExportPenerimaanReportWizard(models.TransientModel):
     product_ids = fields.Many2many('product.product', 'ms_stock_card_product_rel', 'stock_card_id',
                                    'product_id', 'Produk', copy=False, domain=[('type', '=', 'product')])
     export_report = fields.Selection([('BC 2.3', 'BC 2.3'), ('BC 2.6.2', 'BC 2.6.2'), (
-        'BC 2.7', 'BC 2.7'), ('BC 4.0', 'BC 4.0')], "Report Type", default='BC 2.3')
+        'BC 2.7', 'BC 2.7'), ('BC 4.0', 'BC 4.0')], "Report Type", default='')
 
     @api.onchange('date_start', 'date_end')
     def onchange_date(self):
@@ -110,14 +110,19 @@ class InventoryExportPenerimaanReportWizard(models.TransientModel):
         if ids_product:
             where_product = "pp.id in %s" % str(
                 tuple(ids_product)).replace(',)', ')')
+
+        where_export = "AND sp.jenis_dokumen NOT IN ('','Non BC')"
         if export == "BC 2.3":
-            where_export = "BC 2.3"
+            where_export = "AND sp.jenis_dokumen = 'BC 2.3'"
         elif export == "BC 2.6.2":
-            where_export = "BC 2.6.2"
+            where_export = "AND sp.jenis_dokumen = 'BC 2.6.2'"
         elif export == "BC 2.7":
-            where_export = "BC 2.7"
+            where_export = "AND sp.jenis_dokumen = 'BC 2.7'"
         elif export == "BC 4.0":
-            where_export = "BC 4.0"
+            where_export = "AND sp.jenis_dokumen = 'BC 4.0'"
+        elif export == "BC 1.6":
+            where_export = "AND sp.jenis_dokumen = 'BC 1.6'"
+
         query = """
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
@@ -135,7 +140,7 @@ class InventoryExportPenerimaanReportWizard(models.TransientModel):
                 WHERE  sm.state = 'done' 
                 AND ((sm.location_id != '8' AND sm.location_dest_id = '8')
                     OR (sm.location_id != '19' AND sm.location_dest_id = '19')) 
-                AND sp.jenis_dokumen = '""" + where_export + """' 
+                """ + where_export + """ 
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC

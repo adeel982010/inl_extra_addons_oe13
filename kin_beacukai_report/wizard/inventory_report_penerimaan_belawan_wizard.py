@@ -37,7 +37,7 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
     product_ids = fields.Many2many('product.product', 'penerimaan_belawan_product_rel', 'stock_card_id',
                                    'product_id', 'Produk', copy=False, domain=[('type', '=', 'product')])
     export_report = fields.Selection([('BC 1.6', 'BC 1.6'), ('BC 2.3', 'BC 2.3'), ('BC 2.6.2', 'BC 2.6.2'), (
-        'BC 2.7', 'BC 2.7'), ('BC 4.0', 'BC 4.0')], "Report Type", default='BC 2.3')
+        'BC 2.7', 'BC 2.7'), ('BC 4.0', 'BC 4.0')], "Report Type", default='')
 
     @api.onchange('date_start', 'date_end')
     def onchange_date(self):
@@ -110,21 +110,24 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
         if ids_product:
             where_product = "pp.id in %s" % str(
                 tuple(ids_product)).replace(',)', ')')
+
+        where_export = "AND sp.jenis_dokumen NOT IN ('','Non BC')"
         if export == "BC 2.3":
-            where_export = "BC 2.3"
+            where_export = "AND sp.jenis_dokumen = 'BC 2.3'"
         elif export == "BC 2.6.2":
-            where_export = "BC 2.6.2"
+            where_export = "AND sp.jenis_dokumen = 'BC 2.6.2'"
         elif export == "BC 2.7":
-            where_export = "BC 2.7"
+            where_export = "AND sp.jenis_dokumen = 'BC 2.7'"
         elif export == "BC 4.0":
-            where_export = "BC 4.0"
+            where_export = "AND sp.jenis_dokumen = 'BC 4.0'"
         elif export == "BC 1.6":
-            where_export = "BC 1.6"
+            where_export = "AND sp.jenis_dokumen = 'BC 1.6'"
+
         query = """
                 SELECT 
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
-                    sml.qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
+                    SUM(sml.qty_done) AS qty_done, SUM(sm.subtotal_price) AS nilai_barang, spt.code AS status_type, rc.symbol,
                     sp.no_aju, sp.no_invoice, sp.tanggal_invoice 
                 FROM stock_move_line sml
                 LEFT JOIN stock_move sm ON sml.move_id = sm.id
@@ -137,11 +140,16 @@ class InventoryExportPenerimaanBelawanReportWizard(models.TransientModel):
                 LEFT JOIN res_currency rc ON rc.id = sp.currency_id
                 WHERE  sm.state = 'done' 
                 AND (sm.location_id != '21' AND sm.location_dest_id = '21')
-                AND sp.jenis_dokumen = '""" + where_export + """' 
+                """ + where_export + """ 
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """
+                GROUP BY sp.jenis_dokumen, sp.no_dokumen, sp.tanggal_dokumen, sp.name, 
+                    sp.date_done, rp.name, pp.default_code, pt.name, uu.name, 
+                    spt.code, rc.symbol,
+                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC
             """
+        print(query)
         self._cr.execute(query)
         hasil = self._cr.fetchall()
 

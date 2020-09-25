@@ -10,6 +10,7 @@
                     <attribute name="readonly">0</attribute>
                 </xpath>
                 <xpath expr="//field[@name='picking_type_id']" position="after"> 
+                    <field name="tipe_kirim" attrs="{'invisible': [('picking_type_code','=','incoming')]}"/>
                     <field name="jenis_dokumen"/>
                     <field name="no_aju"/>
                     <field name="no_dokumen" attrs="{'required': [('jenis_dokumen', 'not in', ('BC 4.0','BC 4.1'))]}"/>
@@ -19,11 +20,26 @@
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="no_invoice" />
                     <field name="tanggal_invoice" />
+                    <field name="hs_code" />
                 </xpath>
                 <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_uom']" position="after">
                     <field name="product_price"/>
                     <field name="subtotal_price"/>
                 </xpath>
+                <page name="note" position="after">
+                    <page string="Dokumen Pelengkap" name="extra">
+                        <field name="dok_pelengkap_ids" widget="section_and_note_one2many" mode="tree">
+                            <tree editable="bottom" string="Dokumen Pelengkap" default_order="sequence, date desc, number desc, id">
+                                <!-- Displayed fields -->
+                                <field name="sequence" widget="handle"/>
+                                <field name="picking_name" invisible="1"/>
+                                <field name="doc_type"/>
+                                <field name="name"/>
+                                <field name="date"/>
+                            </tree>
+                        </field>
+                    </page>
+                </page>
             </field> 
         </record>
 
@@ -37,9 +53,9 @@
                     <field name="driver_name" />
                     <field name="no_karcis_timbangan" />
                     <field name="no_surat_jalan" />
-                    <field name="bruto_from"/>
-                    <field name="tarra_from"/>
-                    <field name="netto_from"/>
+<!--                    <field name="bruto_from"/>-->
+<!--                    <field name="tarra_from"/>-->
+<!--                    <field name="netto_from"/>-->
                     <field name="bruto"/>
                     <field name="tarra"/>
                 </xpath>

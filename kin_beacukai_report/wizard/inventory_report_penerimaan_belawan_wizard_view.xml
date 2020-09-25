@@ -26,7 +26,7 @@
                 <group col="8" colspan="6">
                     <field name="date_start" required="1" />
                     <field name="date_end" required="1" />
-                    <field name="export_report" required="1" invisible="0"/>
+                    <field name="export_report" invisible="0"/>
                 </group>
                 <footer>
                     <button name="print_inventory_preview_report" string="Preview" type="object" colspan="2" class="oe_highlight" icon="fa-search-plus"/> 

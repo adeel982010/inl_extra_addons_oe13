@@ -7,6 +7,8 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 class stock_picking(models.Model):
     _inherit = "stock.picking"
 
+    move_line_ids = fields.One2many('stock.move.line', 'picking_id', 'Operations', copy=True)
+
     no_dokumen = fields.Char(string="No Pendaftaran", default="-")
     jenis_dokumen = fields.Selection([('Non BC', 'Non BC'), ('BC 1.6', 'BC 1.6'), ('BC 2.3', 'BC 2.3'), ('BC 2.5', 'BC 2.5'), ('BC 2.6.2', 'BC 2.6.2'), ('BC 2.6.1', 'BC 2.6.1'), (
         'BC 2.7', 'BC 2.7'), ('BC 3.0', 'BC 3.0'), ('BC 3.3', 'BC 3.3'), ('BC 4.0', 'BC 4.0'), ('BC 4.1', 'BC 4.1')], 'Jenis BC', default='Non BC')
@@ -16,7 +18,10 @@ class stock_picking(models.Model):
     no_invoice = fields.Char(string="No Invoice")
     tanggal_invoice = fields.Date(
         'Tanggal Invoice', default=lambda *a: datetime.today().date())
-    # no_polisi = fields.Char(string="No Polisi")
+    tipe_kirim = fields.Selection(
+        [('transfer', 'Transfer'), ('lokal', 'Lokal'), ('export', 'Export')], 'Tipe Pengiriman', default='')
+    hs_code = fields.Char(string="HS Code")
+    dok_pelengkap_ids = fields.One2many('stock.picking.document', 'picking_id', string='Dokumen Pelengkap', copy=True)
     # driver_name = fields.Char(string="Nama Supir")
     # no_karcis_timbangan = fields.Char(string="No Karcis Timbangan")
     # no_surat_jalan = fields.Char(string="No Surat Jalan")
