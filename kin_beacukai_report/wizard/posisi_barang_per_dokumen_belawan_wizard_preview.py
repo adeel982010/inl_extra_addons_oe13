@@ -55,7 +55,7 @@ class PosisiBarangPerDokumenBelawanWizard(models.TransientModel):
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
                     coalesce(sml.qty_done,0) AS qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
-                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice,
+                    sp.no_aju, spd.name AS no_invoice, spd.date AS tanggal_invoice,
                     out.jenis_dok_out, out.no_dok_out, out.tgl_dok_out, coalesce(out.qty_out,0) AS qty_out, sm.sequence
                 FROM stock_move_line sml
                 LEFT JOIN stock_move sm ON sml.move_id = sm.id
@@ -78,6 +78,11 @@ class PosisiBarangPerDokumenBelawanWizard(models.TransientModel):
                     AND """ + where_end_date + """
                     GROUP BY sml.lot_id
                 ) out ON out.lot_id = sml.lot_id
+                LEFT JOIN (
+                    SELECT picking_id, name, date
+                    FROM stock_picking_document
+                    WHERE doc_type = 'invoice'
+                ) spd ON spd.picking_id = sp.id
                 WHERE  sm.state = 'done' 
                 AND (sm.location_id != '21' AND sm.location_dest_id = '21')
                 AND """ + where_start_date + """ 
@@ -95,6 +100,10 @@ class PosisiBarangPerDokumenBelawanWizard(models.TransientModel):
             if (val[18]):
                 tgl_dok_out = str(val[18].strftime('%d/%m/%Y'))
 
+            tgl_invoice = ''
+            if val[15]:
+                tgl_invoice = str(val[15].strftime('%d/%m/%Y'))
+
             list_data.append({
                 'jenis_dokumen': val[0],
                 'nomor_pabean': val[1],
@@ -110,7 +119,7 @@ class PosisiBarangPerDokumenBelawanWizard(models.TransientModel):
                 'currency': val[12],
                 'no_aju': val[13],
                 'no_invoice': val[14],
-                'tanggal_invoice': val[15],
+                'tanggal_invoice': tgl_invoice,
                 'jenis_dok_out': val[16],
                 'no_dok_out': val[17],
                 'tgl_dok_out': tgl_dok_out,

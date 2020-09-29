@@ -15,9 +15,9 @@ class stock_picking(models.Model):
     tanggal_dokumen = fields.Date(
         'Tanggal Dokumen', default=lambda *a: datetime.today().date())
     no_aju = fields.Char(string="No Pengajuan")
-    no_invoice = fields.Char(string="No Invoice")
-    tanggal_invoice = fields.Date(
-        'Tanggal Invoice', default=lambda *a: datetime.today().date())
+    # no_invoice = fields.Char(string="No Invoice")
+    # tanggal_invoice = fields.Date(
+    #     'Tanggal Invoice', default=lambda *a: datetime.today().date())
     tipe_kirim = fields.Selection(
         [('transfer', 'Transfer'), ('lokal', 'Lokal'), ('export', 'Export')], 'Tipe Pengiriman', default='')
     hs_code = fields.Char(string="HS Code")

@@ -63,7 +63,7 @@
                                             <span t-esc="line['no_invoice']"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="time.strftime('%d/%m/%Y',time.strptime(str(line['tanggal_invoice']),'%Y-%m-%d'))"/>
+                                            <span t-esc="line['tanggal_invoice']"/>
                                         </td>
                                         <td class="text-center">
                                             <span t-esc="line['seri']"/>

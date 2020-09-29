@@ -18,8 +18,8 @@
                     <field name="currency_id" />
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="after">
-                    <field name="no_invoice" />
-                    <field name="tanggal_invoice" />
+<!--                    <field name="no_invoice" />-->
+<!--                    <field name="tanggal_invoice" />-->
                     <field name="hs_code" />
                 </xpath>
                 <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_uom']" position="after">

@@ -120,7 +120,7 @@ class InventoryPreviewPenerimaanKtanjungReportWizard(models.TransientModel):
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
                     SUM(sml.qty_done) AS qty_done, SUM(sm.subtotal_price) AS nilai_barang, spt.code AS status_type, rc.symbol,
-                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice
+                    sp.no_aju, spd.name AS no_invoice, spd.date AS tanggal_invoice
                 FROM stock_move_line sml
                 LEFT JOIN stock_move sm ON sml.move_id = sm.id
                 LEFT JOIN stock_picking sp ON sml.picking_id=sp.id 
@@ -130,6 +130,11 @@ class InventoryPreviewPenerimaanKtanjungReportWizard(models.TransientModel):
                 LEFT JOIN product_template pt ON pt.id=pp.product_tmpl_id
                 LEFT JOIN stock_picking_type spt ON spt.id=sm.picking_type_id
                 LEFT JOIN res_currency rc ON rc.id = sp.currency_id
+                LEFT JOIN (
+                    SELECT picking_id, name, date
+                    FROM stock_picking_document
+                    WHERE doc_type = 'invoice'
+                ) spd ON spd.picking_id = sp.id
                 WHERE  sm.state = 'done' 
                 AND (sm.location_id != '29' AND sm.location_dest_id = '29')
                 """ + where_export + """ 
@@ -138,7 +143,7 @@ class InventoryPreviewPenerimaanKtanjungReportWizard(models.TransientModel):
                 GROUP BY sp.jenis_dokumen, sp.no_dokumen, sp.tanggal_dokumen, sp.name, 
                     sp.date_done, rp.name, pp.default_code, pt.name, uu.name, 
                     spt.code, rc.symbol,
-                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice
+                    sp.no_aju, spd.name, spd.date
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC
             """
         list_data = []
@@ -151,6 +156,10 @@ class InventoryPreviewPenerimaanKtanjungReportWizard(models.TransientModel):
 
         no = 1
         for val in vals:
+            tgl_invoice = ''
+            if val[15]:
+                tgl_invoice = str(val[15].strftime('%d/%m/%Y'))
+
             list_data.append({
                 'jenis_dokumen': val[0],
                 'nomor_pabean': val[1],
@@ -166,7 +175,7 @@ class InventoryPreviewPenerimaanKtanjungReportWizard(models.TransientModel):
                 'currency': val[12],
                 'no_aju': val[13],
                 'no_invoice': val[14],
-                'tanggal_invoice': val[15]
+                'tanggal_invoice': tgl_invoice
             })
             no += 1
         hasil = list_data

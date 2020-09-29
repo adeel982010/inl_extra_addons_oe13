@@ -81,7 +81,7 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
                     sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
                     sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
                     coalesce(sml.qty_done,0) AS qty_done, coalesce(sm.subtotal_price,0) AS nilai_barang, spt.code AS status_type, rc.symbol,
-                    sp.no_aju, sp.no_invoice, sp.tanggal_invoice,
+                    sp.no_aju, spd.name AS no_invoice, spd.date AS tanggal_invoice,
                     out.jenis_dok_out, out.no_dok_out, out.tgl_dok_out, coalesce(out.qty_out,0) AS qty_out,
                     po.name, po.date_order, sm.sequence
                 FROM stock_move_line sml
@@ -107,6 +107,11 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
                     AND """ + where_end_date + """
                     GROUP BY sml.lot_id
                 ) out ON out.lot_id = sml.lot_id
+                LEFT JOIN (
+                    SELECT picking_id, name, date
+                    FROM stock_picking_document
+                    WHERE doc_type = 'invoice'
+                ) spd ON spd.picking_id = sp.id
                 WHERE  sm.state = 'done' 
                 AND (sm.location_id != '21' AND sm.location_dest_id = '21')
                 AND """ + where_start_date + """ 
@@ -189,7 +194,11 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
             currency = val[12]
             no_aju = val[13]
             no_invoice = val[14]
-            tanggal_invoice = val[15]
+
+            tgl_invoice = ''
+            if val[15]:
+                tgl_invoice = str(val[15].strftime('%d/%m/%Y'))
+
             jenis_dok_out = val[16]
             no_dok_out = val[17]
             tgl_dok_out = tgl_dok_out
@@ -210,7 +219,7 @@ class PosisiStokBarangBelawanWizard(models.TransientModel):
                 position='center', border=1, fontos='black', font_height=200, color='false'))
             worksheet.write(row, 3, no_invoice, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
-            worksheet.write(row, 4, str(tanggal_invoice.strftime('%d/%m/%Y')), xls_format.font_style(
+            worksheet.write(row, 4, tgl_invoice, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))
             worksheet.write(row, 5, seri, xls_format.font_style(
                 position='center', border=1, fontos='black', font_height=200, color='false'))

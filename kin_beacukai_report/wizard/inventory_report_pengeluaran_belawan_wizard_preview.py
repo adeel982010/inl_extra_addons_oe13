@@ -137,16 +137,16 @@ class InventoryPreviewPengeluaranBelawanReportWizard(models.TransientModel):
                 AND """ + where_start_date + """ 
                 AND """ + where_end_date + """                  
                 """ + where_export + """
-                GROUP BY sp.jenis_dokumen, sp.no_dokumen AS no_dokumen_pabean, sp.tanggal_dokumen AS tanggal_dokumen_pabean, sp.name AS no_dokumen, 
-                    sp.date_done AS tanggal_dokumen, rp.name AS nama_mitra, pp.default_code AS kode_barang, pt.name AS nama_barang, uu.name, 
-                    spt.code AS status_type, rc.symbol, sp.no_aju
+                GROUP BY sp.jenis_dokumen, sp.no_dokumen, sp.tanggal_dokumen, sp.name, 
+                    sp.date_done, rp.name, pp.default_code, pt.name, uu.name, 
+                    spt.code, rc.symbol, sp.no_aju
                 ORDER BY sp.tanggal_dokumen ASC, sp.no_dokumen ASC 
             """
         list_data = []
         company = self.env.user.company_id.name
         start_date_format = start_date.strftime('%d/%m/%Y')
         end_date_format = end_date.strftime('%d/%m/%Y')
-
+        print(query)
         self._cr.execute(query)
         vals = self._cr.fetchall()
 
